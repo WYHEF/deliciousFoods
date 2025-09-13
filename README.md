@@ -3,6 +3,10 @@
 ## 🍽️ 项目简介
 基于SpringBoot和Vue.js开发的新疆大学食堂菜品交流平台，为学生提供菜品分享、评论交流和食堂资讯的一站式服务。
 
+## 📸 项目展示
+![项目主页](./screenshots/homepage.png)
+![项目主页](./screenshots/zixun.png)
+
 ## 🚀 技术栈
 
 ### 后端技术

@@ -1,0 +1,553 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="pragma" content="no-cache"/>
+    <meta http-equiv="content-type" content="no-cache, must-revalidate"/>
+    <meta http-equiv="expires" content="Wed, 26 Feb 1997 08:21:57 GMT"/>
+    <title>笔记详情</title>
+
+    <link href="css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="css/my.css" rel="stylesheet"/>
+    <link href="css/nav.css" rel="stylesheet">
+    <link href="/end/css/quill.snow.css" rel="stylesheet">
+    <link href="css/element/index.css" rel="stylesheet"/>
+
+
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+        .ql-editor img {
+            width: 600px;
+        }
+        .simple-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 60px;
+            background: linear-gradient(to bottom, #961E19 0%, #b03a3a 60%, #e05a47 100%);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            padding: 0 40px;
+            font-family: 'Segoe UI', '微软雅黑', Arial, sans-serif;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+        .header-logo {
+            height: 38px;
+            margin-right: 12px;
+        }
+        .header-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #961E19;
+            letter-spacing: 2px;
+        }
+        .header-nav {
+            display: flex;
+            gap: 28px;
+        }
+        .header-nav a {
+            color: #333;
+            font-size: 1em;
+            text-decoration: none;
+            padding: 4px 0;
+            transition: color 0.2s;
+        }
+        .header-nav a:hover {
+            color: #b03a3a;
+        }
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+        .header-right a, .header-right span {
+            color: #666;
+            font-size: 1em;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .header-right a:hover {
+            color: #b03a3a;
+        }
+        .header-title,
+        .header-nav a,
+        .header-right a,
+        .header-right span {
+            color: #fff;
+        }
+        .header-nav a:hover,
+        .header-right a:hover {
+            color: #ffe082;
+        }
+        body {
+            background: #f7f8fa;
+            font-family: 'Segoe UI', '微软雅黑', Arial, sans-serif;
+            color: #222;
+        }
+        .main-content {
+            margin-top: 32px;
+            margin-bottom: 32px;
+            max-width: 900px;
+        }
+        .note-detail-card {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 4px 24px rgba(150,30,25,0.08);
+            padding: 36px 40px 32px 40px;
+            margin-bottom: 32px;
+            transition: box-shadow 0.3s;
+        }
+        .note-detail-card:hover {
+            box-shadow: 0 8px 32px rgba(150,30,25,0.16);
+        }
+        .note-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+        }
+        .note-title {
+            font-size: 2.1em;
+            font-weight: 700;
+            color: #b03a3a;
+            letter-spacing: 1px;
+        }
+        .note-meta {
+            color: #888;
+            font-size: 1em;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .note-body {
+            font-size: 1.18em;
+            color: #333;
+            line-height: 1.9;
+            min-height: 120px;
+            word-break: break-all;
+        }
+        .note-body img {
+            max-width: 100%;
+            border-radius: 10px;
+            margin: 18px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        }
+        .note-body video {
+            display: block;
+            margin: 18px auto;
+            max-width: 100%;
+            border-radius: 10px;
+        }
+        .note-actions {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-bottom: 36px;
+        }
+        .btn-action {
+            background: linear-gradient(90deg, #e05a47 0%, #b03a3a 100%);
+            color: #fff;
+            border: none;
+            border-radius: 24px;
+            padding: 10px 32px;
+            font-size: 1.1em;
+            font-weight: 500;
+            box-shadow: 0 2px 8px rgba(224,90,71,0.08);
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+            outline: none;
+            margin: 0 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-action.collect {
+            background: linear-gradient(90deg, #ffb300 0%, #ff6f00 100%);
+        }
+        .btn-action:hover {
+            transform: translateY(-2px) scale(1.04);
+            box-shadow: 0 6px 18px rgba(224,90,71,0.16);
+            background: linear-gradient(90deg, #b03a3a 0%, #e05a47 100%);
+        }
+        .btn-action.collect:hover {
+            background: linear-gradient(90deg, #ff6f00 0%, #ffb300 100%);
+        }
+        .comment-section {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 4px 24px rgba(150,30,25,0.08);
+            padding: 32px 36px 24px 36px;
+            margin-bottom: 32px;
+        }
+        .comment-title {
+            font-size: 1.4em;
+            font-weight: 600;
+            color: #b03a3a;
+            margin-bottom: 18px;
+            letter-spacing: 1px;
+        }
+        .comment-input-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .comment-input {
+            flex: 1;
+            border-radius: 12px;
+            border: 1.5px solid #e0e0e0;
+            padding: 12px 16px;
+            font-size: 1.08em;
+            resize: none;
+            transition: border 0.2s;
+            background: #fafbfc;
+            outline: none;
+        }
+        .comment-input:focus {
+            border: 1.5px solid #b03a3a;
+            background: #fff;
+        }
+        .btn-send {
+            background: linear-gradient(90deg, #e05a47 0%, #b03a3a 100%);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            padding: 8px 28px;
+            font-size: 1em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+            outline: none;
+            margin-left: 8px;
+        }
+        .btn-send:hover {
+            background: linear-gradient(90deg, #b03a3a 0%, #e05a47 100%);
+            transform: translateY(-1px) scale(1.03);
+        }
+        .comment-card {
+            display: flex;
+            align-items: flex-start;
+            background: #f8f9fa;
+            border-radius: 14px;
+            box-shadow: 0 2px 8px rgba(150,30,25,0.04);
+            padding: 18px 20px 14px 16px;
+            margin-bottom: 18px;
+            transition: box-shadow 0.2s;
+            gap: 16px;
+            animation: fadeInUp 0.4s;
+        }
+        .comment-card:hover {
+            box-shadow: 0 6px 18px rgba(150,30,25,0.10);
+        }
+        .comment-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e05a47 0%, #b03a3a 100%);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-right: 8px;
+            flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(224,90,71,0.10);
+        }
+        .comment-content {
+            flex: 1;
+        }
+        .comment-user {
+            font-weight: 600;
+            color: #b03a3a;
+            margin-bottom: 2px;
+            font-size: 1.08em;
+        }
+        .comment-text {
+            font-size: 1.08em;
+            color: #333;
+            margin-bottom: 6px;
+            word-break: break-all;
+        }
+        .comment-time {
+            color: #aaa;
+            font-size: 0.98em;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        /* 动画 */
+        .fade-enter-active, .fade-leave-active {
+            transition: all 0.4s cubic-bezier(.55,0,.1,1);
+        }
+        .fade-enter, .fade-leave-to {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @media (max-width: 700px) {
+            .main-content, .note-detail-card, .comment-section {
+                padding: 10px !important;
+            }
+            .note-detail-card, .comment-section {
+                border-radius: 10px;
+            }
+            .note-title {
+                font-size: 1.2em;
+            }
+            .btn-action, .btn-send {
+                font-size: 0.98em;
+                padding: 8px 16px;
+            }
+            .comment-avatar {
+                width: 32px;
+                height: 32px;
+                font-size: 1em;
+            }
+        }
+    </style>
+
+</head>
+<body>
+<div id="wrapper" v-cloak>
+    <div class="container">
+        <!-- 头部开始 -->
+        <div class="simple-header">
+            <div class="header-left">
+                <img src="../file/新大logo.png" alt="logo" class="header-logo">
+                <span class="header-title">校园食堂论坛</span>
+            </div>
+            <div class="header-nav">
+                <a href="index.html">首页</a>
+                <a href="advertiserInfo.html">系统公告</a>
+                <a href="foodsMenuInfo.html">菜谱</a>
+                <a href="collectInfo.html">收藏</a>
+                <a href="notesInfo.html">笔记</a>
+                <a href="newsInfo.html">饮食资讯</a>
+                <a href="messageInfo.html">今日话题</a>
+                <a v-if="isShow" href="/end/page/index.html" target="_blank">管理</a>
+            </div>
+            <div class="header-right">
+                <a v-if="!(user.name)" href="/end/page/login.html" target="_blank">登录</a>
+                <a v-if="!(user.name)" href="/end/page/register.html" target="_blank">注册</a>
+                <span v-if="user.name">欢迎您，{{user.name}}</span>
+                <a v-if="user.name" href="javascript:void(0)" @click="logout">退出</a>
+            </div>
+        </div>
+        <!-- 头部结束 -->
+    </div>
+    <div class="container main-content" style="margin-top: 32px; max-width: 900px;">
+        <!-- 笔记详情卡片 -->
+        <div class="note-detail-card">
+            <div class="note-header">
+                <div class="note-title">{{ obj.name }}</div>
+                <div class="note-meta">
+                    <i class="el-icon-time"></i> {{ obj.time }}
+                </div>
+            </div>
+            <div class="note-body ql-editor" id="view-notice-body"></div>
+        </div>
+
+        <!-- 点赞和收藏 -->
+        <div class="note-actions">
+            <button class="btn-action" @click="praise()">
+                <i class="el-icon-thumb"></i> 点赞 <span>({{obj.praiseCount}})</span>
+            </button>
+            <button class="btn-action collect" @click="collect()">
+                <i class="el-icon-star-off"></i> 收藏 <span>({{obj.collectCount}})</span>
+            </button>
+        </div>
+
+        <!-- 评论区 -->
+        <div class="comment-section" v-if="isComment">
+            <div class="comment-title">评论</div>
+            <div class="comment-input-card">
+                <textarea class="comment-input" v-model="comment.content" rows="3" placeholder="说点什么吧..."></textarea>
+                <button class="btn-send" @click="add()">发送</button>
+            </div>
+            <transition-group name="fade" tag="div">
+                <div class="comment-card" v-for="item in comments" :key="item.id">
+                    <div class="comment-avatar">{{ item.name ? item.name.charAt(0).toUpperCase() : '?' }}</div>
+                    <div class="comment-content">
+                        <div class="comment-user">{{ item.name }}</div>
+                        <div class="comment-text">{{ item.content }}</div>
+                        <div class="comment-time"><i class="el-icon-time"></i> {{ item.time }}</div>
+                    </div>
+                </div>
+            </transition-group>
+        </div>
+    </div>
+</div>
+<script src="js/jquery-1.10.2.js"></script>
+<script src="js/vue2.6.11/vue.min.js"></script>
+<script src="js/vue2.6.11/axios.js"></script>
+<script src="/end/js/quill.js"></script>
+<script src="js/element/index.js"></script>
+
+<script>
+    function msg(type, msg) {
+        Vue.prototype.$message({
+            type: type, // success（成功）、warning（警告）, error(错误)
+            message: msg,
+            duration: 2000,
+            offset: 100,
+            center: true,
+        })
+    }
+    new Vue({
+        el: '#wrapper',
+        data: {
+            imgWidth: '0px',
+            comments: [],
+            content: '',
+            obj: {},
+            isComment: true,
+            comment: {
+                content: '',
+                foreignId: 0
+            },
+            fileSrc: '',
+            user: {},
+            isShow: false
+        },
+        created() {
+            axios.get('/auth').then(res => {
+                if (res.data.code === '0') {
+                    this.user = res.data.data;
+                    if (this.user.level !== 3) {
+                        this.isShow = true;
+                    }
+                }
+            });
+
+            this.load();
+        },
+        methods: {
+            load() {
+                let id = this.getQueryVariable('id');
+                this.comment.foreignId = id;
+                if (id !== 0) {
+                    axios.get('/notesInfo/' + id).then(res => {
+                        if (res.data.code === '0') {
+                            let obj = res.data.data;
+                            this.obj = obj;
+                            if (obj.fileName) {
+                                if (/\.(png|jpg|gif|jpeg|webp)$/.test(obj.fileName)) {
+                                    this.obj.fileType = 'image';
+                                } else if (/\.mp4$/.test(obj.fileName)) {
+                                    this.obj.fileType = 'video';
+                                } else {
+                                    this.obj.fileType = 'other';
+                                }
+                                this.fileSrc = '/files/download/' + obj.fileId;
+
+                                let img = new Image();
+                                img.src = this.fileSrc;
+                                let _this = this;
+                                img.onload = function(){
+                                    if (img.width > 590) {
+                                        _this.imgWidth = "100%";
+                                    } else {
+                                        _this.imgWidth = img.width + "px";
+                                    }
+                                };
+                            }
+
+                            $('#view-notice-body').html(obj.content);
+
+                        } else {
+                            alert(res.data.msg)
+                        }
+                    });
+                    this.loadComments(id);
+                }
+            },
+            add() {
+                if (this.comment.content === '') {
+                    return;
+                }
+                axios.post('/notesInfoComment', this.comment).then(res => {
+                    if (res.data.code === '0') {
+                        this.comment.content = '';
+                        this.loadComments(this.comment.foreignId);
+                    } else {
+                        alert(res.data.msg);
+                    }
+                })
+            },
+            loadComments(id) {
+                axios.get('/notesInfoComment/findByForeignId/' + id).then(res => {
+                    if (res.data.code === '0') {
+                        this.comments = res.data.data;
+                    } else {
+                        alert(res.data.msg)
+                    }
+                })
+            },
+            getQueryVariable(key) {
+                let query = window.location.search.substring(1);
+                let vars = query.split("&");
+                for (let i = 0; i < vars.length; i++) {
+                    let pair = vars[i].split("=");
+                    if (pair[0] === key) {
+                        return pair[1];
+                    }
+                }
+                return '';
+            },
+            logout() {
+                axios.get("/logout").then(res => {
+                    if(res.data.code === '0') {
+                        location.href = '/front/index.html';
+                    } else {
+                        msg('error', res.data.msg);
+                    }
+                })
+            },
+            praise() {
+                if(!this.user || !this.user.name) {
+                    location.href = '/end/page/login.html';
+                    return;
+                }
+                const data = {notesId: this.obj.id, name: this.obj.name};
+                axios.post("/praiseInfo", data).then(res => {
+                    if(res.data.code === '0') {
+                        if(res.data.data.id) {
+                            msg("success", '点赞成功');
+                            this.load();
+                        }
+                    } else {
+                        msg('error', res.data.msg);
+                    }
+                })
+            },
+            collect() {
+                if(!this.user || !this.user.name) {
+                    location.href = '/end/page/login.html';
+                    return;
+                }
+                const data = {notesId: this.obj.id, name: this.obj.name};
+                axios.post("/collectInfo", data).then(res => {
+                    if(res.data.code === '0') {
+                        if(res.data.data.id) {
+                            msg("success", '收藏成功');
+                            this.load();
+                        }
+                    } else {
+                        msg('error', res.data.msg);
+                    }
+                })
+            }
+        }
+    })
+</script>
+</body>
+</html>

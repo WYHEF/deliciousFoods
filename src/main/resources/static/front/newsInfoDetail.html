@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="pragma" content="no-cache"/>
+    <meta http-equiv="content-type" content="no-cache, must-revalidate"/>
+    <meta http-equiv="expires" content="Wed, 26 Feb 1997 08:21:57 GMT"/>
+    <title>饮食资讯详情</title>
+
+    <link href="css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="css/my.css" rel="stylesheet"/>
+    <link href="css/nav.css" rel="stylesheet">
+    <link href="/end/css/quill.snow.css" rel="stylesheet">
+
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+        .ql-editor img {
+            width: 600px;
+        }
+        .simple-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 60px;
+            background: linear-gradient(to bottom, #961E19 0%, #b03a3a 60%, #e05a47 100%);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            padding: 0 40px;
+            font-family: 'Segoe UI', '微软雅黑', Arial, sans-serif;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+        .header-logo {
+            height: 38px;
+            margin-right: 12px;
+        }
+        .header-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #961E19;
+            letter-spacing: 2px;
+        }
+        .header-nav {
+            display: flex;
+            gap: 28px;
+        }
+        .header-nav a {
+            color: #333;
+            font-size: 1em;
+            text-decoration: none;
+            padding: 4px 0;
+            transition: color 0.2s;
+        }
+        .header-nav a:hover {
+            color: #b03a3a;
+        }
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+        .header-right a, .header-right span {
+            color: #666;
+            font-size: 1em;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .header-right a:hover {
+            color: #b03a3a;
+        }
+        .header-title,
+        .header-nav a,
+        .header-right a,
+        .header-right span {
+            color: #fff;
+        }
+        .header-nav a:hover,
+        .header-right a:hover {
+            color: #ffe082;
+        }
+        body {
+            background: #f6f7fb;
+        }
+        .news-detail-card {
+            animation: fadeInUp 0.7s cubic-bezier(.39,.575,.565,1) both;
+        }
+        .comment-input-card, .comment-item-card {
+            animation: fadeIn 0.6s cubic-bezier(.39,.575,.565,1) both;
+        }
+        @keyframes fadeInUp {
+            0% { opacity: 0; transform: translateY(40px); }
+            100% { opacity: 1; transform: none; }
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+    </style>
+
+</head>
+<body>
+<div id="wrapper" v-cloak>
+    <div class="container">
+        <!-- 头部开始 -->
+        <div class="simple-header">
+            <div class="header-left">
+                <img src="../file/新大logo.png" alt="logo" class="header-logo">
+                <span class="header-title">校园食堂论坛</span>
+            </div>
+            <div class="header-nav">
+                <a href="index.html">首页</a>
+                <a href="advertiserInfo.html">系统公告</a>
+                <a href="foodsMenuInfo.html">菜谱</a>
+                <a href="collectInfo.html">收藏</a>
+                <a href="notesInfo.html">笔记</a>
+                <a href="newsInfo.html">饮食资讯</a>
+                <a href="messageInfo.html">今日话题</a>
+                <a v-if="isShow" href="/end/page/index.html" target="_blank">管理</a>
+            </div>
+            <div class="header-right">
+                <a v-if="!(user.name)" href="/end/page/login.html" target="_blank">登录</a>
+                <a v-if="!(user.name)" href="/end/page/register.html" target="_blank">注册</a>
+                <span v-if="user.name">欢迎您，{{user.name}}</span>
+                <a v-if="user.name" href="javascript:void(0)" @click="logout">退出</a>
+            </div>
+        </div>
+        <!-- 头部结束 -->
+    </div>
+    <div class="container" style="margin-top: 24px; max-width: 900px;">
+        <!-- 资讯详情卡片 -->
+        <div class="news-detail-card" style="background: #fff; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.07); padding: 36px 40px 28px 40px; margin-bottom: 32px;">
+            <div style="font-size: 2.1em; font-weight: 700; color: #961E19; margin-bottom: 18px; letter-spacing: 1px;">{{ obj.name }}</div>
+            <div v-if="obj.fileType === 'image'" style="text-align:center; margin-bottom: 18px;">
+                <img :src="fileSrc" :style="{width: imgWidth, borderRadius: '10px', boxShadow: '0 2px 12px rgba(0,0,0,0.08)'}" alt="图片" />
+            </div>
+            <div v-if="obj.fileType === 'video'" style="text-align:center; margin-bottom: 18px;">
+                <video :src="fileSrc" controls style="max-width: 100%; border-radius: 10px; box-shadow: 0 2px 12px rgba(0,0,0,0.08)"></video>
+            </div>
+            <div style="font-size: 1.18em; color: #333; line-height: 1.9; white-space: pre-line;">{{ obj.content }}</div>
+        </div>
+
+        <!-- 评论区 -->
+        <div class="comment" v-if="isComment">
+            <div style="font-size: 1.5em; font-weight: 600; color: #961E19; margin-bottom: 18px;">评论</div>
+            <!-- 评论输入卡片 -->
+            <div class="comment-input-card" style="background: #fafbfc; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); padding: 24px 28px 18px 28px; margin-bottom: 28px;">
+                <div style="display: flex; align-items: flex-start; gap: 16px;">
+                    <div style="width: 44px; height: 44px; border-radius: 50%; background: #ffe0e0; display: flex; align-items: center; justify-content: center; font-size: 1.5em; color: #961E19; font-weight: bold;">
+                        <span v-if="user.name">{{ user.name.charAt(0).toUpperCase() }}</span>
+                        <span v-else>访</span>
+                    </div>
+                    <textarea style="flex:1; resize:none; border: none; outline: none; background: #f5f5f7; border-radius: 8px; padding: 12px 14px; font-size: 1.1em; min-height: 60px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); transition: box-shadow 0.2s;" rows="3" v-model="comment.content" placeholder="说点什么吧..."></textarea>
+                </div>
+                <div style="text-align: right; margin-top: 12px;">
+                    <button class="btn btn-primary" style="padding: 7px 32px; font-size: 1.1em; border-radius: 6px; box-shadow: 0 2px 8px rgba(150,30,25,0.08); background: linear-gradient(90deg,#961E19 60%,#e05a47 100%); border: none;" @click="add()">发送</button>
+                </div>
+            </div>
+
+            <!-- 评论列表 -->
+            <div v-for="item in comments" class="comment-item-card" style="background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); padding: 20px 24px 14px 24px; margin-bottom: 18px; display: flex; gap: 16px; align-items: flex-start;">
+                <div style="width: 40px; height: 40px; border-radius: 50%; background: #ffe0e0; display: flex; align-items: center; justify-content: center; font-size: 1.2em; color: #961E19; font-weight: bold;">
+                    <span>{{ item.name ? item.name.charAt(0).toUpperCase() : '用' }}</span>
+                </div>
+                <div style="flex:1;">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 2px;">
+                        <span style="font-weight: 600; color: #961E19; font-size: 1.08em;">{{ item.name || '用户' }}</span>
+                        <span style="color: #bbb; font-size: 0.98em;">{{ item.time }}</span>
+                    </div>
+                    <div style="color: #333; font-size: 1.08em; line-height: 1.7; white-space: pre-line;">{{ item.content }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="js/jquery-1.10.2.js"></script>
+<script src="js/vue2.6.11/vue.min.js"></script>
+<script src="js/vue2.6.11/axios.js"></script>
+<script src="/end/js/quill.js"></script>
+
+<script>
+
+    new Vue({
+        el: '#wrapper',
+        data: {
+            imgWidth: '0px',
+            comments: [],
+            content: '',
+            obj: {},
+            isComment: false,
+            comment: {
+                content: '',
+                foreignId: 0
+            },
+            fileSrc: '',
+            user: {},
+            isShow: false
+        },
+        created() {
+            axios.get('/auth').then(res => {
+                if (res.data.code === '0') {
+                    this.user = res.data.data;
+                    if (this.user.level !== 3) {
+                        this.isShow = true;
+                    }
+                }
+            });
+
+            let id = this.getQueryVariable('id');
+            this.comment.foreignId = id;
+            if (id !== 0) {
+                axios.get('/newsInfo/' + id).then(res => {
+                    if (res.data.code === '0') {
+                        let obj = res.data.data;
+                        this.obj = obj;
+                        if (obj.fileName) {
+                            if (/\.(png|jpg|gif|jpeg|webp)$/.test(obj.fileName)) {
+                                this.obj.fileType = 'image';
+                            } else if (/\.mp4$/.test(obj.fileName)) {
+                                this.obj.fileType = 'video';
+                            } else {
+                                this.obj.fileType = 'other';
+                            }
+                            this.fileSrc = '/files/download/' + obj.fileId;
+
+                            let img = new Image();
+                            img.src = this.fileSrc;
+                            let _this = this;
+                            img.onload = function(){
+                                if (img.width > 590) {
+                                    _this.imgWidth = "100%";
+                                } else {
+                                    _this.imgWidth = img.width + "px";
+                                }
+                            };
+                        }
+                        /*richText
+                        $('#view-notice-body').html(obj.content);
+                        richText*/
+                    } else {
+                        alert(res.data.msg)
+                    }
+                });
+                this.loadComments(id);
+            }
+        },
+        methods: {
+            add() {
+                if (this.comment.content === '') {
+                    return;
+                }
+                axios.post('/newsInfoComment', this.comment).then(res => {
+                    if (res.data.code === '0') {
+                        this.comment.content = '';
+                        this.loadComments(this.comment.foreignId);
+                    } else {
+                        alert(res.data.msg);
+                    }
+                })
+            },
+            loadComments(id) {
+                axios.get('/newsInfoComment/findByForeignId/' + id).then(res => {
+                    if (res.data.code === '0') {
+                        this.comments = res.data.data;
+                    } else {
+                        alert(res.data.msg)
+                    }
+                })
+            },
+            getQueryVariable(key) {
+                let query = window.location.search.substring(1);
+                let vars = query.split("&");
+                for (let i = 0; i < vars.length; i++) {
+                    let pair = vars[i].split("=");
+                    if (pair[0] === key) {
+                        return pair[1];
+                    }
+                }
+                return '';
+            },
+            logout() {
+                axios.get("/logout").then(res => {
+                    if(res.data.code === '0') {
+                        location.href = '/front/index.html';
+                    } else {
+                        msg('error', res.data.msg);
+                    }
+                })
+            }
+        }
+    })
+</script>
+</body>
+</html>

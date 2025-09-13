@@ -1,0 +1,243 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>登陆页面</title>
+
+    <link href="../css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="../css/font-awesome.css" rel="stylesheet"/>
+
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+        body {
+            background: linear-gradient(135deg, #fbeaea 0%, #f5d3d1 100%);
+            min-height: 100vh;
+        }
+        .login-card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 8px 32px 0 rgba(150, 30, 25, 0.10);
+            padding: 40px 32px 32px 32px;
+            margin-top: 60px;
+            transition: box-shadow 0.3s;
+            border: 16px solid #fff;
+        }
+        .login-card:hover {
+            box-shadow: 0 16px 40px 0 rgba(150, 30, 25, 0.18);
+        }
+        .login-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #961E19;
+            margin-bottom: 24px;
+            letter-spacing: 2px;
+        }
+        .form-control, select.form-control {
+            border-radius: 8px;
+            border: 1px solid #e0e3e7;
+            box-shadow: none;
+            transition: border 0.2s;
+            font-size: 16px;
+        }
+        ::-webkit-input-placeholder { font-size: 16px; }
+        :-moz-placeholder { font-size: 16px; }
+        ::-moz-placeholder { font-size: 16px; }
+        :-ms-input-placeholder { font-size: 16px; }
+        input::placeholder { font-size: 16px; }
+        select.form-control {
+            font-size: 16px !important;
+        }
+        select.form-control option {
+            font-size: 16px;
+        }
+        /* 兼容火狐、IE等浏览器下拉框选中项字体 */
+        select.form-control, select.form-control option, select.form-control:focus, select.form-control:active {
+            font-size: 16px !important;
+        }
+        .form-control:focus, select.form-control:focus {
+            border: 1.5px solid #961E19;
+            box-shadow: 0 0 0 2px #fbeaea;
+        }
+        .input-group-addon {
+            border-radius: 8px 0 0 8px;
+            background: #fbeaea;
+            border: 1px solid #e0e3e7;
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, #961E19 0%, #c94a44 100%);
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 10px 0;
+            width: 100%;
+            box-shadow: 0 2px 8px 0 rgba(150, 30, 25, 0.10);
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(90deg, #c94a44 0%, #961E19 100%);
+            box-shadow: 0 4px 16px 0 rgba(150, 30, 25, 0.18);
+        }
+        .panel-body {
+            padding: 0;
+        }
+        .form-group input, .form-group select {
+            height: 44px;
+            font-size: 1rem;
+        }
+        .pull-right a {
+            color: #961E19;
+            text-decoration: underline;
+            font-size: 0.98rem;
+            transition: color 0.2s;
+        }
+        .pull-right a:hover {
+            color: #c94a44;
+        }
+        @media (max-width: 600px) {
+            .login-card {
+                padding: 24px 8px 16px 8px;
+            }
+            .login-title {
+                font-size: 1.4rem;
+            }
+        }
+        /* 增大输入框和下拉框字体 */
+        .form-control, select.form-control, input.form-control {
+            font-size: 16px !important;
+        }
+        /* 登陆按钮字体16px */
+        .btn-primary {
+            font-size: 16px !important;
+        }
+        /* 忘记密码字体12px */
+        .pull-right a {
+            font-size: 14px !important;
+        }
+        .col-md-12 h2 {
+            color: #961E19 !important;
+        }
+    </style>
+</head>
+<body style="background-color: #E2E2E2;">
+<div id="app" class="container" v-cloak>
+    <div class="row text-center " style="padding-top:100px;">
+        <div class="col-md-12">
+            <h2>欢迎登陆新大校园食堂论坛</h2>
+        </div>
+    </div>
+    <div class="row ">
+
+        <div class="col-md-4 col-md-offset-4 col-sm-6 col-sm-offset-3 col-xs-10 col-xs-offset-1">
+
+            <div class="panel-body login-card">
+                <form role="form">
+                    <div class="form-group input-group">
+                        <span class="input-group-addon"><i class="fa fa-tag"></i></span>
+                        <input type="text" class="form-control" v-model="user.name" placeholder="用户名"/>
+                    </div>
+                    <div class="form-group input-group">
+                        <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                        <input type="password" class="form-control" v-model="user.password" placeholder=" 密码"/>
+                    </div>
+
+
+                    <h5 style="margin: 18px 0 8px 0; font-weight: 600; color: #2d3a4b;">请选择角色</h5>
+                    <div class="form-group input-group">
+                        <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                        <select v-model="user.level" class="form-control" style="height:44px;">
+                            <option v-for="item in authorities" :value="item.level" name="level">{{item.name}}</option>
+                        </select>
+                    </div>
+
+                    <!-- 忘记密码移动到此处 -->
+                    <div class="form-group" style="margin-bottom: 8px;">
+                        <span class="pull-right">
+                               <a href="javascript:void(0)" @click="reset">忘记密码?</a>
+                        </span>
+                    </div>
+                    <div style="text-align: center; margin-top: 18px;">
+                        <a href="javascript:void(0)" @click="login" class="btn btn-primary">登陆</a>
+                    </div>
+                </form>
+            </div>
+            <!-- 新增注册链接 -->
+            <div style="text-align:center; margin-top:16px;">
+                <span style="font-size:14px; color:#555;">还没有账号？<a href="/end/page/register.html" style="color:#961E19; text-decoration:underline;">立即注册</a></span>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="../js/vue2.6.11/vue.min.js"></script>
+<script src="../js/vue2.6.11/axios.js"></script>
+
+<script>
+    new Vue({
+        el: "#app",
+        data: {
+            user: {
+                name: "",
+                password: "",
+                level: null
+            },
+            authorities: [],
+        },
+        created: function () {
+            axios.get("/getAuthority").then(res => {
+                if (res.data.code === '0') {
+                    this.authorities = res.data.data;
+                } else {
+                    alert(res.data.msg);
+                }
+            });
+        },
+        methods: {
+            login() {
+                if (!this.user.name) {
+                    alert("请输入用户名");
+                    return;
+                }
+                if (!this.user.password) {
+                    alert("请输入密码");
+                    return;
+                }
+                if (!this.user.level) {
+                    alert("请选择角色");
+                    return;
+                }
+                axios.post('/login', this.user).then(res => {
+                    if(res.data.code === '0') {
+                        localStorage.setItem('user', JSON.stringify(res.data.data));
+                        window.location = '/front/index.html';
+                    } else {
+                        alert(res.data.msg);
+                    }
+                });
+            },
+            reset() {
+                if (!this.user.name) {
+                    alert("请输入用户名");
+                    return;
+                }
+                if (!this.user.level) {
+                    alert("请选择角色");
+                    return;
+                }
+                axios.post('/resetPassword', this.user).then(res => {
+                    if(res.data.code === '0') {
+                        alert("重置密码成功，密码重置为：123456")
+                    } else {
+                        alert(res.data.msg);
+                    }
+                });
+            }
+        }
+    });
+</script>
+</body>
+</html>

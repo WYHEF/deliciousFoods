@@ -1,0 +1,475 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="pragma" content="no-cache"/>
+    <meta http-equiv="content-type" content="no-cache, must-revalidate"/>
+    <meta http-equiv="expires" content="Wed, 26 Feb 1997 08:21:57 GMT"/>
+    <title>菜谱信息详情</title>
+
+    <link href="css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="css/my.css" rel="stylesheet"/>
+    <link href="css/nav.css" rel="stylesheet">
+    <link href="/end/css/quill.snow.css" rel="stylesheet">
+    <link href="css/element/index.css" rel="stylesheet"/>
+
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+        .ql-editor img {
+            width: 600px;
+        }
+        /* 顶部导航栏样式保持不变 */
+        /* 内容区美化 */
+        .info-card {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            padding: 36px 36px 24px 36px;
+            margin-bottom: 32px;
+            margin-top: 32px;
+        }
+        .menu-detail-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 32px;
+            align-items: flex-start;
+        }
+        .menu-img-box {
+            flex: 1 1 340px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 320px;
+        }
+        .menu-img-box img, .menu-img-box video {
+            border-radius: 14px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+            max-width: 420px;
+            max-height: 340px;
+            width: auto;
+            height: auto;
+        }
+        .menu-info-box {
+            flex: 2 1 380px;
+            min-width: 320px;
+        }
+        .menu-info-item {
+            margin-bottom: 18px;
+            font-size: 1.13em;
+            color: #444;
+            display: flex;
+        }
+        .menu-info-label {
+            min-width: 80px;
+            color: #b03a3a;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+        .menu-info-value {
+            flex: 1;
+        }
+        /* 点赞/收藏按钮美化 */
+        .action-btn {
+            border: none;
+            outline: none;
+            border-radius: 22px;
+            padding: 10px 32px;
+            font-size: 1.1em;
+            font-weight: bold;
+            margin: 0 12px;
+            background: linear-gradient(90deg, #ff5858 0%, #f09819 100%);
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(255,88,88,0.10);
+            transition: transform 0.15s, box-shadow 0.15s;
+            cursor: pointer;
+        }
+        .action-btn:hover {
+            transform: translateY(-2px) scale(1.04);
+            box-shadow: 0 6px 18px rgba(255,88,88,0.18);
+            background: linear-gradient(90deg, #f09819 0%, #ff5858 100%);
+        }
+        /* 评论区美化 */
+        .comment {
+            margin-top: 40px;
+        }
+        .comment-title {
+            font-size: 1.35em;
+            font-weight: bold;
+            color: #b03a3a;
+            margin-bottom: 18px;
+        }
+        .comment-item-card {
+            background: #faf7f5;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(176,58,58,0.06);
+            padding: 18px 22px 10px 22px;
+            margin-bottom: 18px;
+        }
+        .comment-item-card .comment-author {
+            font-weight: bold;
+            color: #b03a3a;
+            font-size: 1.08em;
+        }
+        .comment-item-card .comment-content {
+            margin: 8px 0 4px 0;
+            color: #444;
+            font-size: 1.05em;
+        }
+        .comment-item-card .comment-time {
+            color: #aaa;
+            font-size: 0.98em;
+            text-align: right;
+            display: block;
+        }
+        .comment-input-box {
+            background: #f5f5f7;
+            border-radius: 10px;
+            padding: 18px 22px 10px 22px;
+            margin-bottom: 18px;
+            box-shadow: 0 1px 4px rgba(176,58,58,0.04);
+        }
+        .comment-input-box textarea {
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            padding: 10px;
+            font-size: 1.08em;
+            width: 100%;
+            resize: none;
+            margin-bottom: 10px;
+        }
+        .comment-input-box .btn-primary {
+            background: linear-gradient(90deg, #ff5858 0%, #f09819 100%);
+            border: none;
+            border-radius: 18px;
+            padding: 7px 28px;
+            font-size: 1em;
+            font-weight: bold;
+            color: #fff;
+            transition: background 0.2s;
+        }
+        .comment-input-box .btn-primary:hover {
+            background: linear-gradient(90deg, #f09819 0%, #ff5858 100%);
+        }
+
+        .simple-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 60px;
+            background: linear-gradient(to bottom, #961E19 0%, #b03a3a 60%, #e05a47 100%);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            padding: 0 40px;
+            font-family: 'Segoe UI', '微软雅黑', Arial, sans-serif;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+        .header-logo {
+            height: 38px;
+            margin-right: 12px;
+        }
+        .header-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #961E19;
+            letter-spacing: 2px;
+        }
+        .header-nav {
+            display: flex;
+            gap: 28px;
+        }
+        .header-nav a {
+            color: #333;
+            font-size: 1em;
+            text-decoration: none;
+            padding: 4px 0;
+            transition: color 0.2s;
+        }
+        .header-nav a:hover {
+            color: #b03a3a;
+        }
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+        .header-right a, .header-right span {
+            color: #666;
+            font-size: 1em;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .header-right a:hover {
+            color: #b03a3a;
+        }
+        .header-title,
+        .header-nav a,
+        .header-right a,
+        .header-right span {
+            color: #fff;
+        }
+        .header-nav a:hover,
+        .header-right a:hover {
+            color: #ffe082;
+        }
+
+    </style>
+
+</head>
+<body>
+<div id="wrapper" v-cloak>
+    <div class="container">
+        <!-- 头部开始 -->
+        <div class="simple-header">
+            <div class="header-left">
+                <img src="../file/新大logo.png" alt="logo" class="header-logo">
+                <span class="header-title">校园食堂论坛</span>
+            </div>
+            <div class="header-nav">
+                <a href="index.html">首页</a>
+                <a href="advertiserInfo.html">系统公告</a>
+                <a href="foodsMenuInfo.html">菜谱</a>
+                <a href="collectInfo.html">收藏</a>
+                <a href="notesInfo.html">笔记</a>
+                <a href="newsInfo.html">饮食资讯</a>
+                <a href="messageInfo.html">今日话题</a>
+                <a v-if="isShow" href="/end/page/index.html" target="_blank">管理</a>
+            </div>
+            <div class="header-right">
+                <a v-if="!(user.name)" href="/end/page/login.html" target="_blank">登录</a>
+                <a v-if="!(user.name)" href="/end/page/register.html" target="_blank">注册</a>
+                <span v-if="user.name">欢迎您，{{user.name}}</span>
+                <a v-if="user.name" href="javascript:void(0)" @click="logout">退出</a>
+            </div>
+        </div>
+        <!-- 头部结束 -->
+    </div>
+    <div class="container" style="margin-top: 10px">
+        <div class="info-card">
+            <div class="menu-detail-row">
+                <div class="menu-img-box">
+                    <img v-if="obj.fileType === 'image'" :style="'width:' + imgWidth" :src="fileSrc" alt="">
+                    <video v-if="obj.fileType === 'video'" controls="controls" :src="fileSrc"></video>
+                    <div v-if="obj.fileType === 'other'">该文件不支持预览，只有视频和图片支持预览</div>
+                </div>
+                <div class="menu-info-box">
+                    <div class="menu-info-item">
+                        <span class="menu-info-label">名称：</span>
+                        <span class="menu-info-value">{{ obj.name }}</span>
+                    </div>
+                    <div class="menu-info-item">
+                        <span class="menu-info-label">描述：</span>
+                        <span class="menu-info-value">{{ obj.description }}</span>
+                    </div>
+                    <div class="menu-info-item">
+                        <span class="menu-info-label">菜谱标签：</span>
+                        <span class="menu-info-value">{{ obj.tips }}</span>
+                    </div>
+                    <div class="menu-info-item">
+                        <span class="menu-info-label">上传人：</span>
+                        <span class="menu-info-value">{{ obj.userName }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="text-align: center; margin-bottom: 32px;">
+            <button class="action-btn" @click="praise()">
+                点赞({{obj.praiseCount}})
+            </button>
+            <button class="action-btn" style="background: linear-gradient(90deg, #ffb347 0%, #ff5858 100%);" @click="collect()">
+                收藏({{obj.collectCount}})
+            </button>
+        </div>
+        <div class="comment" v-if="isComment">
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2">
+                    <div class="comment-title">评论</div>
+                </div>
+            </div>
+            <div class="comment-input-box">
+                <div class="row mt-10">
+                    <div class="col-md-12" style="text-align: justify">
+                        <textarea rows="3" v-model="comment.content" placeholder="说点什么吧..."></textarea>
+                    </div>
+                </div>
+                <div class="row mt-10">
+                    <div class="col-md-12" style="text-align: right;">
+                        <button class="btn btn-primary f-r" @click="add()">发送</button>
+                    </div>
+                </div>
+            </div>
+            <div v-for="item in comments" class="comment-item-card">
+                <div class="comment-author">{{ item.name }}</div>
+                <div class="comment-content">{{ item.content }}</div>
+                <span class="comment-time">{{ item.time }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="js/jquery-1.10.2.js"></script>
+<script src="js/vue2.6.11/vue.min.js"></script>
+<script src="js/vue2.6.11/axios.js"></script>
+<script src="/end/js/quill.js"></script>
+<script src="js/element/index.js"></script>
+
+<script>
+    function msg(type, msg) {
+        Vue.prototype.$message({
+            type: type, // success（成功）、warning（警告）, error(错误)
+            message: msg,
+            duration: 2000,
+            offset: 100,
+            center: true,
+        })
+    }
+    new Vue({
+        el: '#wrapper',
+        data: {
+            imgWidth: '0px',
+            comments: [],
+            content: '',
+            obj: {},
+            isComment: false,
+            comment: {
+                content: '',
+                foreignId: 0
+            },
+            fileSrc: '',
+            user: {},
+            isShow: false
+        },
+        created() {
+            axios.get('/auth').then(res => {
+                if (res.data.code === '0') {
+                    this.user = res.data.data;
+                    if (this.user.level !== 3) {
+                        this.isShow = true;
+                    }
+                }
+            });
+            this.load();
+        },
+        methods: {
+            load() {
+                let id = this.getQueryVariable('id');
+                this.comment.foreignId = id;
+                if (id !== 0) {
+                    axios.get('/foodsMenuInfo/' + id).then(res => {
+                        if (res.data.code === '0') {
+                            let obj = res.data.data;
+                            this.obj = obj;
+                            if (obj.fileName) {
+                                if (/\.(png|jpg|gif|jpeg|webp)$/.test(obj.fileName)) {
+                                    this.obj.fileType = 'image';
+                                } else if (/\.mp4$/.test(obj.fileName)) {
+                                    this.obj.fileType = 'video';
+                                } else {
+                                    this.obj.fileType = 'other';
+                                }
+                                this.fileSrc = '/files/download/' + obj.fileId;
+
+                                let img = new Image();
+                                img.src = this.fileSrc;
+                                let _this = this;
+                                img.onload = function(){
+                                    if (img.width > 590) {
+                                        _this.imgWidth = "100%";
+                                    } else {
+                                        _this.imgWidth = img.width + "px";
+                                    }
+                                };
+                            }
+                            /*richText
+                            $('#view-notice-body').html(obj.content);
+                            richText*/
+                        } else {
+                            alert(res.data.msg)
+                        }
+                    });
+                }
+            },
+            add() {
+                if (this.comment.content === '') {
+                    return;
+                }
+                axios.post('/foodsMenuInfoComment', this.comment).then(res => {
+                    if (res.data.code === '0') {
+                        this.comment.content = '';
+                        this.loadComments(this.comment.foreignId);
+                    } else {
+                        alert(res.data.msg);
+                    }
+                })
+            },
+            loadComments(id) {
+                axios.get('/foodsMenuInfoComment/findByForeignId/' + id).then(res => {
+                    if (res.data.code === '0') {
+                        this.comments = res.data.data;
+                    } else {
+                        alert(res.data.msg)
+                    }
+                })
+            },
+            getQueryVariable(key) {
+                let query = window.location.search.substring(1);
+                let vars = query.split("&");
+                for (let i = 0; i < vars.length; i++) {
+                    let pair = vars[i].split("=");
+                    if (pair[0] === key) {
+                        return pair[1];
+                    }
+                }
+                return '';
+            },
+            logout() {
+                axios.get("/logout").then(res => {
+                    if(res.data.code === '0') {
+                        location.href = '/front/index.html';
+                    } else {
+                        msg('error', res.data.msg);
+                    }
+                })
+            },
+            praise() {
+                if(!this.user || !this.user.name) {
+                    location.href = '/end/page/login.html';
+                    return;
+                }
+                const data = {foodsId: this.obj.id, name: this.obj.name};
+                axios.post("/praiseInfo", data).then(res => {
+                    if(res.data.code === '0') {
+                        if(res.data.data.id) {
+                            msg("success", '点赞成功');
+                            this.load();
+                        }
+                    } else {
+                        msg('error', res.data.msg);
+                    }
+                })
+            },
+            collect() {
+                if(!this.user || !this.user.name) {
+                    location.href = '/end/page/login.html';
+                    return;
+                }
+                const data = {foodsId: this.obj.id, name: this.obj.name};
+                axios.post("/collectInfo", data).then(res => {
+                    if(res.data.code === '0') {
+                        if(res.data.data.id) {
+                            msg("success", '收藏成功');
+                            this.load();
+                        }
+                    } else {
+                        msg('error', res.data.msg);
+                    }
+                })
+            }
+        }
+    })
+</script>
+</body>
+</html>

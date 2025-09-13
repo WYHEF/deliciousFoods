@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="pragma" content="no-cache"/>
+    <meta http-equiv="content-type" content="no-cache, must-revalidate"/>
+    <meta http-equiv="expires" content="Wed, 26 Feb 1997 08:21:57 GMT"/>
+    <title>公告</title>
+    <link href="/front/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/front/css/my.css" rel="stylesheet">
+    <link href="/front/css/nav.css" rel="stylesheet">
+
+    <style>
+        #notice-box li {
+            margin-bottom: 10px;
+        }
+        #view-notice-body img {
+            width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+        #view-notice-body iframe {
+            width: 400px;
+        }
+        .simple-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 60px;
+            background: linear-gradient(to bottom, #961E19 0%, #b03a3a 60%, #e05a47 100%);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            padding: 0 40px;
+            font-family: 'Segoe UI', '微软雅黑', Arial, sans-serif;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+        .header-logo {
+            height: 38px;
+            margin-right: 12px;
+        }
+        .header-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #961E19;
+            letter-spacing: 2px;
+        }
+        .header-nav {
+            display: flex;
+            gap: 28px;
+        }
+        .header-nav a {
+            color: #333;
+            font-size: 1em;
+            text-decoration: none;
+            padding: 4px 0;
+            transition: color 0.2s;
+        }
+        .header-nav a:hover {
+            color: #b03a3a;
+        }
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+        .header-right a, .header-right span {
+            color: #666;
+            font-size: 1em;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .header-right a:hover {
+            color: #b03a3a;
+        }
+        .header-title,
+        .header-nav a,
+        .header-right a,
+        .header-right span {
+            color: #fff;
+        }
+        .header-nav a:hover,
+        .header-right a:hover {
+            color: #ffe082;
+        }
+
+        /* 公告列表美化 */
+        #notice-box {
+            border-radius: 12px;
+            box-shadow: 0 4px 18px rgba(150,30,25,0.08);
+            background: #fff;
+            overflow: hidden;
+        }
+        .panel-heading {
+            border-radius: 14px 14px 0 0;
+            background: linear-gradient(90deg, #ffe082 0% , #e05a47 100%);
+            color: #961E19 !important;
+            font-size: 1.3em;
+            font-weight: bold;
+            padding: 18px 24px 10px 24px;
+            border-bottom: 1px solid #f5e1d6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        /* 公告列表美化 */
+        #notice-box .panel-heading {
+            background: linear-gradient(90deg, #ffe082 0%, #e05a47 100%);
+            color: #961E19;
+            font-weight: bold;
+            font-size: 1.3em;              /* 统一字号 */
+            border-radius: 14px 14px 0 0;  /* 统一圆角 */
+            padding: 18px 24px 10px 24px;  /* 统一内边距 */
+            border-bottom: 1px solid #f5e1d6;
+            display: flex;
+            align-items: center;
+        }
+        #notice-item-box {
+            padding-left: 0;
+            margin-bottom: 0;
+        }
+        #notice-item-box li {
+            list-style: none;
+            margin-bottom: 8px;
+            transition: background 0.2s;
+            border-radius: 6px;
+            padding: 2px 8px;
+            display: flex;
+            align-items: center;
+        }
+        #notice-item-box li a {
+            display: block;
+            width: 100%;
+            color: #333;
+            font-size: 1em;
+            text-decoration: none;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: color 0.2s;
+            padding: 4px 0;
+        }
+        #notice-item-box li a.active,
+        #notice-item-box li a:hover {
+            color: #e05a47;
+            font-weight: bold;
+            background: #fff3e0;
+            border-radius: 4px;
+        }
+        #notice-item-box li::before {
+            content: "📢";
+            margin-right: 8px;
+            font-size: 1.1em;
+            color: #e05a47;
+        }
+
+        /* 文章栏美化 */
+        .panel.panel-default {
+            border-radius: 14px;
+            box-shadow: 0 4px 18px rgba(150,30,25,0.10);
+            border: none;
+            background: #fff;
+            margin-bottom: 18px;
+        }
+
+        .panel-heading span {
+            font-size: 0.95em;
+            color: #888;
+            font-weight: normal;
+        }
+        #view-notice-body {
+            padding: 24px;
+            font-size: 1.13em;
+            line-height: 1.8;
+            background: #fffdfa;
+            border-radius: 0 0 14px 14px;
+            min-height: 320px;
+            box-sizing: border-box;
+            border-top: 1px solid #f5e1d6;
+        }
+        #view-notice-body img {
+            border-radius: 10px;
+            margin: 18px 0;
+            box-shadow: 0 2px 8px rgba(150,30,25,0.08);
+        }
+    </style>
+</head>
+<body>
+<div id="wrapper">
+    <div class="container">
+        <!-- 头部开始 -->
+        <div class="simple-header">
+            <div class="header-left">
+                <img src="../file/新大logo.png" alt="logo" class="header-logo">
+                <span class="header-title">校园食堂论坛</span>
+            </div>
+            <div class="header-nav">
+                <a href="index.html">首页</a>
+                <a href="advertiserInfo.html">系统公告</a>
+                <a href="foodsMenuInfo.html">菜谱</a>
+                <a href="collectInfo.html">收藏</a>
+                <a href="notesInfo.html">笔记</a>
+                <a href="newsInfo.html">饮食资讯</a>
+                <a href="messageInfo.html">今日话题</a>
+                <a v-if="isShow" href="/end/page/index.html" target="_blank">管理</a>
+            </div>
+            <div class="header-right">
+                <a v-if="!(user.name)" href="/end/page/login.html" target="_blank">登录</a>
+                <a v-if="!(user.name)" href="/end/page/register.html" target="_blank">注册</a>
+                <span v-if="user.name">欢迎您，{{user.name}}</span>
+                <a v-if="user.name" href="javascript:void(0)" @click="logout">退出</a>
+            </div>
+        </div>
+        <!-- 头部结束 -->
+    </div>
+    <div class="container" style="margin-top: 10px">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <b>{{currentAdvertiser.name}}</b>
+                        <span style="float: right; color: whitesmoke">{{currentAdvertiser.time}}</span>
+                    </div>
+                    <div class="panel-body" id="view-notice-body" v-html="currentAdvertiser.content"></div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="panel panel-default" id="notice-box">
+                    <div class="panel-heading"><b>公告列表</b></div>
+                    <div class="panel-body">
+                        <ul id="notice-item-box">
+                            <li v-for="item in advertiserList">
+                                <a :href="'advertiserInfo.html?id=' + item.id"  v-bind:class="{active: item.isActive}">{{item.name}}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--js库文件-->
+<script src="js/jquery-1.10.2.js"></script>
+<script src="js/vue2.6.11/vue.min.js"></script>
+<script src="js/vue2.6.11/axios.js"></script>
+
+<script>
+    new Vue({
+        el: '#wrapper',
+        data: {
+            user: {},
+            currentId: 0,
+            isShow: false,
+            advertiserList: [],
+            currentAdvertiser: {}
+        },
+
+        created: function () {
+            axios.get('/auth').then(res => {
+                if (res.data.code === '0') {
+                    this.user = res.data.data;
+                    if (this.user.level !== 3) {
+                        this.isShow = true;
+                    }
+                }
+            });
+            this.currentId = this.getQueryVariable('id');
+            this.loadAdvertiserInfo();
+        },
+
+        methods: {
+            loadAdvertiserInfo() {
+                axios.get('/advertiserInfo/page/all?pageSize=10').then(res => {
+                    if (res.data.code === '0') {
+                        this.advertiserList = res.data.data.list;
+                        let found = false;
+                        this.advertiserList.forEach(item => {
+                            // 优先根据URL参数id选中
+                            if(parseInt(this.currentId) === item.id) {
+                                item.isActive = true;
+                                this.currentAdvertiser = item;
+                                found = true;
+                            } else {
+                                item.isActive = false;
+                            }
+                        });
+                        // 如果没有id参数或找不到，默认选中“每日新闻”
+                        if (!found) {
+                            let daily = this.advertiserList.find(item => item.name && item.name.indexOf('每日新闻') !== -1);
+                            if (daily) {
+                                daily.isActive = true;
+                                this.currentAdvertiser = daily;
+                            } else if (this.advertiserList.length > 0) {
+                                // 兜底：选第一个
+                                this.advertiserList[0].isActive = true;
+                                this.currentAdvertiser = this.advertiserList[0];
+                            }
+                        }
+                    }
+                })
+            },
+            getQueryVariable(variable) {
+                let query = window.location.search.substring(1);
+                let vars = query.split("&");
+                for (let i = 0; i < vars.length; i++) {
+                    let pair = vars[i].split("=");
+                    if (pair[0] === variable) {
+                        return pair[1];
+                    }
+                }
+                return '1';
+            },
+            logout() {
+                axios.get("/logout").then(res => {
+                    if(res.data.code === '0') {
+                        location.href = '/front/index.html';
+                    } else {
+                        msg('error', res.data.msg);
+                    }
+                })
+            }
+        }
+    })
+</script>
+</body>
+</html>

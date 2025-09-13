@@ -1,0 +1,60 @@
+# Java
+*.class
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Maven
+target/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Eclipse
+.settings/
+.classpath
+.project
+
+# Log files
+*.log
+log/
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Database
+*.db
+*.sqlite
+
+# Application properties
+application-dev.properties
+application-prod.properties
+
+# Uploaded files
+src/main/resources/static/file/
+
+# Ignore all files in static/file directory except README.md
+src/main/resources/static/file/*
+!src/main/resources/static/file/README.md
+
+# Ignore log files but keep the directory
+log/*
+!log/.gitkeep

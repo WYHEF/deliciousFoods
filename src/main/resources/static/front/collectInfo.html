@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="pragma" content="no-cache"/>
+    <meta http-equiv="content-type" content="no-cache, must-revalidate"/>
+    <meta http-equiv="expires" content="Wed, 26 Feb 1997 08:21:57 GMT"/>
+    <title>收藏</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/my.css" rel="stylesheet">
+    <link href="css/nav.css" rel="stylesheet">
+    <link href="css/element/index.css" rel="stylesheet"/>
+
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+        .simple-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 60px;
+            background: linear-gradient(to bottom, #961E19 0%, #b03a3a 60%, #e05a47 100%);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            padding: 0 40px;
+            font-family: 'Segoe UI', '微软雅黑', Arial, sans-serif;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+        .header-logo {
+            height: 38px;
+            margin-right: 12px;
+        }
+        .header-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #961E19;
+            letter-spacing: 2px;
+        }
+        .header-nav {
+            display: flex;
+            gap: 28px;
+        }
+        .header-nav a {
+            color: #333;
+            font-size: 1em;
+            text-decoration: none;
+            padding: 4px 0;
+            transition: color 0.2s;
+        }
+        .header-nav a:hover {
+            color: #b03a3a;
+        }
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+        .header-right a, .header-right span {
+            color: #666;
+            font-size: 1em;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .header-right a:hover {
+            color: #b03a3a;
+        }
+        .header-title,
+        .header-nav a,
+        .header-right a,
+        .header-right span {
+            color: #fff;
+        }
+        .header-nav a:hover,
+        .header-right a:hover {
+            color: #ffe082;
+        }
+        /* 表格美化 */
+        .table-hover tbody tr:hover {
+            background: #fff3e0 !important;
+        }
+        .table th, .table td {
+            vertical-align: middle !important;
+        }
+        .table {
+            margin-bottom: 0;
+        }
+        .pagination .page-link {
+            color: #b03a3a;
+            border-radius: 8px;
+            margin: 0 2px;
+            border: 1px solid #e0e0e0;
+            transition: background 0.2s, color 0.2s;
+        }
+        .pagination .page-link:hover {
+            background: #ffe0b2;
+            color: #e05a47;
+        }
+        .pagination .active .page-link {
+            background: #e05a47;
+            border-color: #e05a47;
+            color: #fff;
+        }
+        .btn-danger {
+            background: linear-gradient(90deg, #e05a47 0%, #b03a3a 100%);
+            border: none;
+        }
+        .btn-danger:hover {
+            background: #b03a3a;
+        }
+        /* 响应式 */
+        @media (max-width: 700px) {
+            .container { padding: 0 2px !important; }
+            .table th, .table td { font-size: 0.95em; padding: 6px 2px; }
+            .btn { font-size: 0.95em; padding: 3px 8px; }
+        }
+        .container {
+            max-width: 1200px !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+    </style>
+</head>
+<body>
+<div id="wrapper" v-cloak>
+    <div class="container">
+        <!-- 头部开始 -->
+        <div class="simple-header">
+            <div class="header-left">
+                <img src="../file/新大logo.png" alt="logo" class="header-logo">
+                <span class="header-title">校园食堂论坛</span>
+            </div>
+            <div class="header-nav">
+                <a href="index.html">首页</a>
+                <a href="advertiserInfo.html">系统公告</a>
+                <a href="foodsMenuInfo.html">菜谱</a>
+                <a href="collectInfo.html">收藏</a>
+                <a href="notesInfo.html">笔记</a>
+                <a href="newsInfo.html">饮食资讯</a>
+                <a href="messageInfo.html">今日话题</a>
+                <a v-if="isShow" href="/end/page/index.html" target="_blank">管理</a>
+            </div>
+            <div class="header-right">
+                <a v-if="!(user.name)" href="/end/page/login.html" target="_blank">登录</a>
+                <a v-if="!(user.name)" href="/end/page/register.html" target="_blank">注册</a>
+                <span v-if="user.name">欢迎您，{{user.name}}</span>
+                <a v-if="user.name" href="javascript:void(0)" @click="logout">退出</a>
+            </div>
+        </div>
+        <!-- 头部结束 -->
+    </div>
+    <div class="container"  style="margin-top: 0px; max-width: 950px;">
+        <div class="col-md-12">
+            <div style="background: #fff; border-radius: 6px; box-shadow: 0 2px 16px rgba(150,30,25,0.08); padding: 32px 0 24px 0;">
+                <table class="table table-hover table-borderless" style="border-radius: 4px; overflow: hidden; box-shadow: 0 1px 6px rgba(150,30,25,0.06); margin-bottom: 0;">
+                    <thead>
+                    <tr style="background: linear-gradient(90deg, #e05a47 0%, #b03a3a 100%); color: #fff;">
+                        <th style="width: 60px; text-align: center;">ID</th>
+                        <th style="text-align: center;">名称</th>
+                        <th style="text-align: center;">类型</th>
+                        <th style="text-align: center;">时间</th>
+                        <th style="text-align: center;">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-if="tableData.length === 0">
+                        <td colspan="5" style="text-align: center; color: #aaa; padding: 40px 0; font-size: 1.1em;">暂无收藏内容~</td>
+                    </tr>
+                    <tr v-for="(data,index) in tableData" :key="data.id" style="transition: background 0.2s;">
+                        <td style="text-align: center; vertical-align: middle;">{{data.id}}</td>
+                        <td style="text-align: center; vertical-align: middle;"><a style="color: #1976d2; font-weight: 500; text-decoration: underline;" :href="data.url" target="_blank">{{data.name}}</a></td>
+                        <td style="text-align: center; vertical-align: middle;">
+                            <span :style="{background: data.foodsId ? '#ffe0b2' : '#b2dfdb', color: data.foodsId ? '#b03a3a' : '#00796b', padding: '2px 12px', borderRadius: '12px', fontSize: '0.98em', fontWeight: 'bold'}">
+                                {{data.foodsId? '菜谱' : '笔记'}}
+                            </span>
+                        </td>
+                        <td style="text-align: center; vertical-align: middle;">{{data.time}}</td>
+                        <td style="text-align: center; vertical-align: middle;">
+                            <button class="btn btn-danger btn-sm" style="border-radius: 18px; padding: 4px 18px; font-weight: 500; letter-spacing: 1px; box-shadow: 0 1px 4px rgba(224,90,71,0.08); transition: background 0.2s;" @click="del(data.id)">
+                                <i class="el-icon-delete"></i> 取消收藏
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div style="text-align: center; margin-top: 24px;">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination justify-content-center" style="margin-bottom: 0;">
+                            <li class="page-item" :class="{ disabled: preActive }">
+                                <a class="page-link" style="border-radius: 8px 0 0 8px; min-width: 70px;" href="javascript:void(0)"
+                                   @click="loadTable(pageInfo.pageNum - 1)">上一页</a>
+                            </li>
+                            <li class="page-item" v-if="pageInfo.pageNum > 1">
+                                <a class="page-link" href="javascript:void(0)" @click="loadTable(pageInfo.pageNum - 1)">{{pageInfo.pageNum - 1}}</a>
+                            </li>
+                            <li class="page-item active">
+                                <a class="page-link" aria-disabled="true" href="javascript:void(0)" style="background: #e05a47; border-color: #e05a47; color: #fff;">{{pageInfo.pageNum}}</a>
+                            </li>
+                            <li class="page-item" v-if="pageInfo.hasNextPage">
+                                <a class="page-link" href="javascript:void(0)" @click="loadTable(pageInfo.pageNum + 1)">{{pageInfo.pageNum + 1}}</a>
+                            </li>
+                            <li class="page-item" :class="{ disabled: nextActive }">
+                                <a class="page-link" style="border-radius: 0 8px 8px 0; min-width: 70px;" href="javascript:void(0)" @click="loadTable(pageInfo.hasNextPage? (pageInfo.pageNum + 1) : pageInfo.pageNum)">下一页</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="js/jquery-1.10.2.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/jquery.metisMenu.js"></script>
+<script src="js/vue2.6.11/axios.js"></script>
+<script src="js/vue2.6.11/vue.min.js"></script>
+<script src="js/element/index.js"></script>
+
+<script>
+    function msg(type, msg) {
+        Vue.prototype.$message({
+            type: type, // success（成功）、warning（警告）, error(错误)
+            message: msg,
+            duration: 2000,
+            offset: 100,
+            center: true,
+        })
+    }
+
+    new Vue({
+        el: '#wrapper',
+        data: {
+            tableData: [],
+            pageInfo: {},
+            preActive: true,
+            nextActive: true,
+            user: {},
+            isShow: false
+        },
+
+        created: function() {
+            axios.get('/auth').then(res => {
+                if (res.data.code === '0') {
+                    this.user = res.data.data;
+                    if (this.user.level !== 3) {
+                        this.isShow = true;
+                    }
+
+                    this.loadTable(1);
+                }
+            });
+
+        },
+
+        methods: {
+            loadTable(pageNum) {
+                let url = "/collectInfo/page/all?pageSize=10&pageNum=" + pageNum;
+                if (!this.user || !this.user.name) {
+                    url += "&level=9";   // 不查询
+                } else {
+                    url += "&userId=" + this.user.id + "&level=" + this.user.level;
+                }
+                axios.get(url).then(res => {
+                    if (res.data.code === '0') {
+                        this.tableData = res.data.data.list;
+                        for (const item of this.tableData) {
+                            item.url = item.notesId ? "notesInfoDetail.html?id=" + item.notesId :
+                                "foodsMenuInfoDetail.html?id=" + item.foodsId;
+                        }
+                        this.pageInfo = res.data.data;
+                        this.preActive = !(this.pageInfo.hasPreviousPage);
+                        this.nextActive = !(this.pageInfo.hasNextPage);
+                    } else {
+                        alert(res.data.msg);
+                    }
+                });
+            },
+            logout() {
+                axios.get("/logout").then(res => {
+                    if(res.data.code === '0') {
+                        location.href = '/front/index.html';
+                    } else {
+                        msg('error', res.data.msg);
+                    }
+                })
+            },
+            del(id) {
+                if(!this.user || !this.user.name) {
+                    location.href = '/end/page/login.html';
+                    return;
+                }
+                axios.delete("/collectInfo/" + id).then(res => {
+                    if(res.data.code === '0') {
+                        msg('success', "取消成功");
+                        this.loadTable(1);
+                    } else {
+                        msg('error', res.data.msg);
+                    }
+                })
+            }
+        }
+    })
+</script>
+</body>
+</html>

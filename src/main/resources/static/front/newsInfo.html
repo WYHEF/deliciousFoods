@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="pragma" content="no-cache"/>
+    <meta http-equiv="content-type" content="no-cache, must-revalidate"/>
+    <meta http-equiv="expires" content="Wed, 26 Feb 1997 08:21:57 GMT"/>
+    <title>饮食资讯信息</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/my.css" rel="stylesheet">
+    <link href="css/nav.css" rel="stylesheet">
+
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+        .simple-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 60px;
+            background: linear-gradient(to bottom, #961E19 0%, #b03a3a 60%, #e05a47 100%);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            padding: 0 40px;
+            font-family: 'Segoe UI', '微软雅黑', Arial, sans-serif;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+        .header-logo {
+            height: 38px;
+            margin-right: 12px;
+        }
+        .header-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #961E19;
+            letter-spacing: 2px;
+        }
+        .header-nav {
+            display: flex;
+            gap: 28px;
+        }
+        .header-nav a {
+            color: #333;
+            font-size: 1em;
+            text-decoration: none;
+            padding: 4px 0;
+            transition: color 0.2s;
+        }
+        .header-nav a:hover {
+            color: #b03a3a;
+        }
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+        .header-right a, .header-right span {
+            color: #666;
+            font-size: 1em;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .header-right a:hover {
+            color: #b03a3a;
+        }
+        .header-title,
+        .header-nav a,
+        .header-right a,
+        .header-right span {
+            color: #fff;
+        }
+        .header-nav a:hover,
+        .header-right a:hover {
+            color: #ffe082;
+        }
+        iframe::-webkit-scrollbar {
+            display: none;
+        }
+        iframe {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body>
+<div id="wrapper" v-cloak>
+    <div class="container">
+        <!-- 头部开始 -->
+        <div class="simple-header">
+            <div class="header-left">
+                <img src="../file/新大logo.png" alt="logo" class="header-logo">
+                <span class="header-title">校园食堂论坛</span>
+            </div>
+            <div class="header-nav">
+                <a href="index.html">首页</a>
+                <a href="advertiserInfo.html">系统公告</a>
+                <a href="foodsMenuInfo.html">菜谱</a>
+                <a href="collectInfo.html">收藏</a>
+                <a href="notesInfo.html">笔记</a>
+                <a href="newsInfo.html">饮食资讯</a>
+                <a href="messageInfo.html">今日话题</a>
+                <a v-if="isShow" href="/end/page/index.html" target="_blank">管理</a>
+            </div>
+            <div class="header-right">
+                <a v-if="!(user.name)" href="/end/page/login.html" target="_blank">登录</a>
+                <a v-if="!(user.name)" href="/end/page/register.html" target="_blank">注册</a>
+                <span v-if="user.name">欢迎您，{{user.name}}</span>
+                <a v-if="user.name" href="javascript:void(0)" @click="logout">退出</a>
+            </div>
+        </div>
+        <!-- 头部结束 -->
+    </div>
+    <div class="container"  style="margin-top: 32px; max-width: 1100px;">
+        <div class="row" style="display: flex; gap: 32px;">
+            <div class="col-md-7" style="padding:0;">
+                <div style="background: linear-gradient(135deg, #ffe082 0%, #e05a47 100%); border-radius: 18px; box-shadow: 0 4px 24px rgba(150,30,25,0.08); padding: 28px 24px 18px 24px; margin-bottom: 32px;">
+                    <h4 style="font-weight: bold; color: #b03a3a; margin-bottom: 18px; letter-spacing: 1px;">饮食资讯</h4>
+                    <table class="table table-hover" style="border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(150,30,25,0.06);">
+                        <thead>
+                        <tr style="background: linear-gradient(90deg, #e05a47 0%, #ffe082 100%); color: #fff;">
+                            <th>标题</th>
+                            <th>资讯内容</th>
+                            <th>详情</th>
+                        </tr>
+                        </thead>
+                        <tbody style="background: #fff;">
+                        <tr v-for="(data,index) in tableData" :key="data.id" style="transition: background 0.2s;">
+                            <td style="vertical-align: middle; color: #961E19; font-weight: bold;">{{data.name}}</td>
+                            <td style="vertical-align: middle; color: #961E19; font-weight: bold;">{{data.content}}</td>
+                            <td style="vertical-align: middle;">
+                                <a :href=`newsInfoDetail.html?id=${data.id}` target="_blank" class="btn btn-sm" style="background: linear-gradient(90deg, #e05a47 0%, #ffe082 100%); color: #fff; border: none; border-radius: 8px; font-weight: bold;">详情</a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div style="text-align: center; margin-top: 12px;">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination" style="justify-content: center;">
+                            <li class="page-item" :class="{ disabled: preActive }">
+                                <a class="page-link" href="javascript:void(0)" @click="loadTable(pageInfo.pageNum - 1)" style="border-radius: 8px;">上一页</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:void(0)" v-if="pageInfo.pageNum > 1" @click="loadTable(pageInfo.pageNum - 1)" style="border-radius: 8px;">{{pageInfo.pageNum - 1}}</a>
+                            </li>
+                            <li class="page-item disabled">
+                                <a class="page-link" aria-disabled="true" href="javascript:void(0)" style="border-radius: 8px; background: #ffe082; color: #b03a3a;">{{pageInfo.pageNum}}</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:void(0)" v-if="pageInfo.hasNextPage" @click="loadTable(pageInfo.pageNum + 1)" style="border-radius: 8px;">{{pageInfo.pageNum + 1}}</a>
+                            </li>
+                            <li class="page-item" :class="{ disabled: nextActive }">
+                                <a class="page-link" href="javascript:void(0)" @click="loadTable(pageInfo.hasNextPage? (pageInfo.pageNum + 1) : pageInfo.pageNum)" style="border-radius: 8px;">下一页</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            <div class="col-md-5" style="padding:0;">
+                <div style="background: linear-gradient(135deg, #ffe082 0%, #e05a47 100%); border-radius: 18px; box-shadow: 0 4px 24px rgba(150,30,25,0.10); padding: 28px 24px; margin-bottom: 24px; min-height: 660px; display: flex; flex-direction: column; align-items: center;">
+                    <h4 style="font-weight: bold; color: #b03a3a; margin-bottom: 18px; letter-spacing: 1px;">营养计算器</h4>
+                    <iframe
+                            src="https://5fdd5e28547240768e47bcabfe35535e.elf.site/"
+                            width="100%"
+                            height="770px"
+                            frameborder="0"
+                            scrolling="no"
+                            style="border-radius: 12px; box-shadow: 0 2px 8px rgba(150,30,25,0.10); background: #fff; height: 770px; overflow: hidden;"
+                    ></iframe>
+                    <div style="margin-top: 18px; background: rgba(255,255,255,0.85); border-radius: 10px; padding: 12px 16px; color: #b03a3a; font-size: 0.98em; box-shadow: 0 1px 4px rgba(150,30,25,0.06); width: 100%;">
+                        <b>小贴士：</b>本计算器可帮助你估算常见食物的营养成分，合理搭配饮食更健康！
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</div>
+
+<script src="js/jquery-1.10.2.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/jquery.metisMenu.js"></script>
+<script src="js/vue2.6.11/axios.js"></script>
+<script src="js/vue2.6.11/vue.min.js"></script>
+
+<script>
+    new Vue({
+        el: '#wrapper',
+        data: {
+            tableData: [],
+            pageInfo: {},
+            preActive: true,
+            nextActive: true,
+            user: {},
+            isShow: false
+        },
+
+        created: function() {
+            axios.get('/auth').then(res => {
+                if (res.data.code === '0') {
+                    this.user = res.data.data;
+                    if (this.user.level !== 3) {
+                        this.isShow = true;
+                    }
+                }
+            });
+            this.loadTable(1);
+        },
+
+        methods: {
+            loadTable(pageNum) {
+                axios.get("/newsInfo/page/all?pageSize=15&pageNum=" + pageNum).then(res => {
+                    if (res.data.code === '0') {
+                        this.tableData = res.data.data.list;
+                        this.pageInfo = res.data.data;
+                        this.preActive = !(this.pageInfo.hasPreviousPage);
+                        this.nextActive = !(this.pageInfo.hasNextPage);
+                    } else {
+                        alert(res.data.msg);
+                    }
+                });
+            },
+            logout() {
+                axios.get("/logout").then(res => {
+                    if(res.data.code === '0') {
+                        location.href = '/front/index.html';
+                    } else {
+                        msg('error', res.data.msg);
+                    }
+                })
+            }
+        }
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="pragma" content="no-cache"/>
+    <meta http-equiv="content-type" content="no-cache, must-revalidate"/>
+    <meta http-equiv="expires" content="Wed, 26 Feb 1997 08:21:57 GMT"/>
+    <title>留言</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/my.css" rel="stylesheet">
+    <link href="css/nav.css" rel="stylesheet">
+
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+        .simple-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 60px;
+            background: linear-gradient(to bottom, #961E19 0%, #b03a3a 60%, #e05a47 100%);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            padding: 0 40px;
+            font-family: 'Segoe UI', '微软雅黑', Arial, sans-serif;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+        .header-logo {
+            height: 38px;
+            margin-right: 12px;
+        }
+        .header-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #961E19;
+            letter-spacing: 2px;
+        }
+        .header-nav {
+            display: flex;
+            gap: 28px;
+        }
+        .header-nav a {
+            color: #333;
+            font-size: 1em;
+            text-decoration: none;
+            padding: 4px 0;
+            transition: color 0.2s;
+        }
+        .header-nav a:hover {
+            color: #b03a3a;
+        }
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+        .header-right a, .header-right span {
+            color: #666;
+            font-size: 1em;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .header-right a:hover {
+            color: #b03a3a;
+        }
+        .header-title,
+        .header-nav a,
+        .header-right a,
+        .header-right span {
+            color: #fff;
+        }
+        .header-nav a:hover,
+        .header-right a:hover {
+            color: #ffe082;
+        }
+        /* ====== 新增美化样式 ====== */
+        .message-card {
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+            padding: 32px 32px 18px 32px;
+            margin-bottom: 32px;
+            transition: box-shadow 0.2s;
+        }
+        .message-card:hover {
+            box-shadow: 0 6px 24px rgba(0,0,0,0.13);
+        }
+        .message-title {
+            font-size: 1.25em;
+            font-weight: 600;
+            color: #b03a3a;
+            margin-bottom: 18px;
+        }
+        .message-input-area {
+            background: #fafbfc;
+            border-radius: 12px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+            padding: 24px 24px 12px 24px;
+            margin-bottom: 28px;
+        }
+        .message-input-area textarea {
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            min-height: 80px;
+            font-size: 1.1em;
+            padding: 12px;
+            transition: border 0.2s;
+        }
+        .message-input-area textarea:focus {
+            border: 1.5px solid #b03a3a;
+            outline: none;
+        }
+        .message-input-area .btn-primary {
+            border-radius: 6px;
+            font-size: 1.08em;
+            padding: 6px 32px;
+            background: linear-gradient(90deg, #b03a3a 60%, #e05a47 100%);
+            border: none;
+            box-shadow: 0 2px 8px rgba(224,90,71,0.08);
+            transition: background 0.2s;
+        }
+        .message-input-area .btn-primary:hover {
+            background: linear-gradient(90deg, #e05a47 60%, #b03a3a 100%);
+        }
+        .message-list-title {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #b03a3a;
+            margin: 0 0 18px 0;
+            letter-spacing: 1px;
+        }
+        .message-item {
+            background: #f8f8f8;
+            border-radius: 10px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+            margin-bottom: 18px;
+            padding: 18px 24px 10px 24px;
+            display: flex;
+            flex-direction: column;
+            transition: box-shadow 0.2s;
+        }
+        .message-item:hover {
+            box-shadow: 0 4px 16px rgba(176,58,58,0.08);
+        }
+        .message-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+        .message-username {
+            font-weight: 500;
+            color: #961E19;
+            font-size: 1.08em;
+        }
+        .message-time {
+            color: #aaa;
+            font-size: 0.98em;
+        }
+        .message-content {
+            font-size: 1.13em;
+            color: #333;
+            text-align: justify;
+            margin-bottom: 2px;
+            word-break: break-all;
+        }
+        @media (max-width: 768px) {
+            .message-card, .message-input-area, .message-item {
+                padding: 12px 8px 10px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div id="wrapper" v-cloak>
+    <div class="container">
+        <!-- 头部开始 -->
+        <div class="simple-header">
+            <div class="header-left">
+                <img src="../file/新大logo.png" alt="logo" class="header-logo">
+                <span class="header-title">校园食堂论坛</span>
+            </div>
+            <div class="header-nav">
+                <a href="index.html">首页</a>
+                <a href="advertiserInfo.html">系统公告</a>
+                <a href="foodsMenuInfo.html">菜谱</a>
+                <a href="collectInfo.html">收藏</a>
+                <a href="notesInfo.html">笔记</a>
+                <a href="newsInfo.html">饮食资讯</a>
+                <a href="messageInfo.html">今日话题</a>
+                <a v-if="isShow" href="/end/page/index.html" target="_blank">管理</a>
+            </div>
+            <div class="header-right">
+                <a v-if="!(user.name)" href="/end/page/login.html" target="_blank">登录</a>
+                <a v-if="!(user.name)" href="/end/page/register.html" target="_blank">注册</a>
+                <span v-if="user.name">欢迎您，{{user.name}}</span>
+                <a v-if="user.name" href="javascript:void(0)" @click="logout">退出</a>
+            </div>
+        </div>
+        <!-- 头部结束 -->
+    </div>
+    <div class="container" style="margin-top: 20px">
+        <div class="message-card">
+            <div class="message-title">您印象最深的一道美食是什么呢？</div>
+            <div class="message-input-area">
+                <textarea id="message-text" style="resize:none; width: 100%" placeholder="欢迎分享你的美食记忆..."></textarea>
+                <div style="text-align: right; margin-top: 10px;">
+                    <button class="btn btn-primary" @click="submitMessage">发送</button>
+                </div>
+            </div>
+        </div>
+        <div class="message-card">
+            <div class="message-list-title">食客留言（{{totalMessage}}）</div>
+            <div id="comment-content">
+                <div v-for="item in messages" class="message-item">
+                    <div class="message-meta">
+                        <span class="message-username">{{item.name}}</span>
+                        <span class="message-time">{{item.time}}</span>
+                    </div>
+                    <div class="message-content">{{item.content}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="js/jquery-1.10.2.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/jquery.metisMenu.js"></script>
+<script src="js/vue2.6.11/axios.js"></script>
+<script src="js/vue2.6.11/vue.min.js"></script>
+
+<script>
+    Date.prototype.Format = function (fmt) { // author: meizz
+        let o = {
+            "M+": this.getMonth() + 1, // 月份
+            "d+": this.getDate(), // 日
+            "h+": this.getHours(), // 小时
+            "m+": this.getMinutes(), // 分
+            "s+": this.getSeconds(), // 秒
+            "q+": Math.floor((this.getMonth() + 3) / 3), // 季度
+            "S": this.getMilliseconds() // 毫秒
+        };
+        if (/(y+)/.test(fmt))
+            fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+        for (var k in o)
+            if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+        return fmt;
+    };
+
+    new Vue({
+        el: '#wrapper',
+        data: {
+            messages: [],
+            totalMessage: 0,
+            isShow: false,
+            user: {},
+            isShow: false
+        },
+
+        created: function() {
+            axios.get('/auth').then(res => {
+                if (res.data.code === '0') {
+                    this.user = res.data.data;
+                    if (this.user.level !== 3) {
+                        this.isShow = true;
+                    }
+                }
+            });
+            this.loadMessages(1);
+        },
+
+        methods: {
+            loadMessages() {
+                axios.get('/messageInfo').then(res => {
+                    if (res.data.code === '0') {
+                        this.messages = res.data.data;
+                        this.totalMessage = this.messages.length;
+                    } else {
+                        alert(res.data.msg)
+                    }
+                })
+            },
+            submitMessage() {
+                let user = JSON.parse(localStorage.getItem('user'));
+                if (!user) {
+                    alert('请先登录');
+                    this.loadMessages();
+                    return;
+                }
+                let data = {};
+                data.content = $('#message-text').val();
+                data.name = user.name;
+                data.time = new Date().Format('yyyy-MM-dd hh:mm:ss');
+                axios.post('/messageInfo', data).then(res => {
+                    $('#message-text').val('');
+                    alert('留言成功');
+                    this.loadMessages();
+                })
+            },
+            logout() {
+                axios.get("/logout").then(res => {
+                    if(res.data.code === '0') {
+                        location.href = '/front/index.html';
+                    } else {
+                        msg('error', res.data.msg);
+                    }
+                })
+            }
+        }
+    })
+</script>
+</body>
+</html>

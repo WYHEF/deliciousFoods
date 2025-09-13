@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="pragma" content="no-cache"/>
+    <meta http-equiv="content-type" content="no-cache, must-revalidate"/>
+    <meta http-equiv="expires" content="Wed, 26 Feb 1997 08:21:57 GMT"/>
+    <title>首页</title>
+    <link href="css/swiper-5.4.5/swiper.min.css" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/my.css" rel="stylesheet">
+    <link href="css/nav.css" rel="stylesheet">
+
+    <style>
+
+        .notice-box li {
+            float: left;
+            text-align: center;
+        }
+
+        .notice-box li img {
+            width: 100%
+        }
+
+        /* 抽奖装置样式 */
+        .lottery-container {
+            width: 1000px; /* 5个卡片宽度 */
+            margin: 0 auto;
+            overflow: hidden;
+            position: relative;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .lottery-track {
+            display: flex;
+            transition: transform 0.1s linear;
+            height: 100%;
+            width: max-content; /* 新增：让轨道宽度自适应内容 */
+        }
+
+        .lottery-item {
+            flex-shrink: 0;
+            width: 200px;
+            height: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .lottery-card {
+            background: white;
+            border-radius: 10px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+            overflow: hidden;
+        }
+
+        .lottery-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .lottery-img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .lottery-name {
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+            color: #333;
+            font-size: 14px;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Swiper自定义左右箭头按钮样式 */
+        .swiper-button-prev, .swiper-button-next {
+            width: 48px;
+            height: 80px;
+            color: #fff;
+            background: rgba(0,0,0,0); /* 默认无底色 */
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s;
+            font-size: 32px;
+        }
+
+        .swiper-button-prev:after, .swiper-button-next:after {
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .swiper-button-prev:hover, .swiper-button-next:hover {
+            background: rgba(0,0,0,0.6); /* 悬停时黑色半透明 */
+            border-radius: 16px;
+        }
+
+        .swiper-button-prev,
+        .swiper-button-next {
+            top: 54% !important;  /* 你可以尝试52%、54%、55%等，直到满意为止 */
+            transform: translateY(-50%) !important;
+        }
+        .swiper-button-prev {
+            left: 10px !important;
+        }
+        .swiper-button-next {
+            right: 10px !important;
+        }
+
+        /* Swiper分页器横条样式 */
+        .swiper-pagination-bullet {
+            width: 32px;
+            height: 6px;
+            display: inline-block;
+            border-radius: 3px;
+            background: #888;
+            opacity: 1;
+            margin: 0 4px !important;
+            transition: background 0.3s;
+        }
+
+        .swiper-pagination-bullet-active {
+            background: #fff;
+        }
+
+        .simple-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 60px;
+            background: linear-gradient(to bottom, #961E19 0%, #b03a3a 60%, #e05a47 100%);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            padding: 0 40px;
+            font-family: 'Segoe UI', '微软雅黑', Arial, sans-serif;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-logo {
+            height: 38px;
+            margin-right: 12px;
+        }
+
+        .header-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #961E19;
+            letter-spacing: 2px;
+        }
+
+        .header-nav {
+            display: flex;
+            gap: 28px;
+        }
+
+        .header-nav a {
+            color: #333;
+            font-size: 1em;
+            text-decoration: none;
+            padding: 4px 0;
+            transition: color 0.2s;
+        }
+
+        .header-nav a:hover {
+            color: #b03a3a;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .header-right a, .header-right span {
+            color: #666;
+            font-size: 1em;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .header-right a:hover {
+            color: #b03a3a;
+        }
+        .header-title,
+        .header-nav a,
+        .header-right a,
+        .header-right span {
+            color: #fff;
+        }
+        .header-nav a:hover,
+        .header-right a:hover {
+            color: #ffe082;
+        }
+    </style>
+</head>
+<body>
+
+<div id="wrapper" style="padding-bottom: 20px">
+    <div class="container">
+        <!-- 头部开始 -->
+        <div class="simple-header">
+            <div class="header-left">
+                <img src="../file/新大logo.png" alt="logo" class="header-logo">
+                <span class="header-title">校园食堂论坛</span>
+            </div>
+            <div class="header-nav">
+                <a href="index.html">首页</a>
+                <a href="advertiserInfo.html">系统公告</a>
+                <a href="foodsMenuInfo.html">菜谱</a>
+                <a href="collectInfo.html">收藏</a>
+                <a href="notesInfo.html">笔记</a>
+                <a href="newsInfo.html">饮食资讯</a>
+                <a href="messageInfo.html">今日话题</a>
+            </div>
+            <div class="header-right">
+                <a v-if="!(user.name)" href="/end/page/login.html" target="_blank">登录</a>
+                <a v-if="!(user.name)" href="/end/page/register.html" target="_blank">注册</a>
+                <span v-if="user.name">欢迎您，{{user.name}}</span>
+                <a v-if="user.name" href="javascript:void(0)" @click="logout">退出</a>
+            </div>
+        </div>
+        <!-- 头部结束 -->
+
+
+    </div>
+
+    <div class="container" style="margin-top: 5px">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="swiper-container">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide"><img class="carousel-img" src="/front/img/carousel/1.jpg" alt=""></div>
+                        <div class="swiper-slide"><img class="carousel-img" src="/front/img/carousel/2.jpg" alt=""></div>
+                        <div class="swiper-slide"><img class="carousel-img" src="/front/img/carousel/3.jpg" alt=""></div>
+                        <div class="swiper-slide"><img class="carousel-img" src="/front/img/carousel/4.jpg" alt=""></div>
+                    </div>
+                    <!-- 如果需要分页器 -->
+                    <div class="swiper-pagination"></div>
+                    <!-- 如果需要导航按钮 -->
+                    <div class="swiper-button-prev"></div>
+                    <div class="swiper-button-next"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container">
+        <div style="padding: 20px; font-size: 20px; color: orangered"><b>每日精选菜谱</b></div>
+        <!--菜谱-->
+        <div>
+            <div style="width: 25%; display: inline-block; padding: 10px; text-align: center" v-for="item in tableData" :key="item.id">
+                <a :href="'foodsMenuInfoDetail.html?id='+item.id">
+                    <img style="width: 100%; height: 180px; border-radius: 10px" :src='"/files/download/" + item.fileId' alt="">
+                </a>
+                <div style="padding-top: 10px"><b>{{item.name}}</b></div>
+                <div> #{{item.tips}}# {{item.description}}</div>
+            </div>
+        </div>
+
+        <!-- 今天吃什么抽奖装置 -->
+        <div style="padding: 20px; font-size: 20px; color: orangered"><b>今天吃什么？</b></div>
+        <div style="background: radial-gradient(circle at 50% 50%, #f7b5a3 0%, #e05a47 60%, #b03a3a 100%); padding: 30px; border-radius: 15px; margin: 20px 0;">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <button @click="startLottery" :disabled="isLotteryRunning"
+                        style="background: #b03a3a; color: white; border: none; padding: 12px 30px; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s;"
+                        :style="isLotteryRunning ? 'opacity: 0.6; cursor: not-allowed;' : 'box-shadow: 0 4px 15px rgba(176, 58, 58, 0.3);'">
+                    {{ isLotteryRunning ? '抽奖中...' : '开始抽奖' }}
+                </button>
+            </div>
+
+            <div class="lottery-container">
+                <div class="lottery-track" :style="{ transform: 'translateX(' + lotteryOffset + 'px)' }">
+                    <a :href="'foodsMenuInfoDetail.html?id=' + item.id" target="_blank" class="lottery-item" v-for="(item, index) in displayLotteryItems" :key="index" style="text-decoration: none; color: inherit;">
+                        <div class="lottery-card">
+                            <img :src="'/files/download/' + item.fileId" :alt="item.name" class="lottery-img">
+                            <div class="lottery-name">{{ item.name }}</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <div v-if="selectedFood" style="text-align: center; margin-top: 20px; padding: 15px; background: rgba(255, 255, 255, 0.9); border-radius: 10px;">
+                <h3 style="color: #333; margin: 0;">🎉 今天吃这个吧！</h3>
+                <p style="color: #666; margin: 10px 0 0 0;">{{ selectedFood.name }}</p>
+            </div>
+        </div>
+
+        <!-- 食材 -->
+        <div style="padding: 20px; font-size: 20px; color: orangered"><b>热门食材</b></div>
+        <!--食材-->
+        <div>
+            <div style="width: 20%; display: inline-block; padding: 10px; text-align: center" v-for="item in materialTableData" :key="item.id">
+                <a :href="'foodsMaterialInfoDetail.html?id='+item.id">
+                    <img style="width: 100%; height: 180px; border-radius: 10px" :src='"/files/download/" + item.fileId' alt="">
+                </a>
+                <div style="padding-top: 10px"><b>{{item.name}}</b></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--js库文件-->
+<script src="js/jquery-1.10.2.js"></script>
+<script src="js/vue2.6.11/axios.js"></script>
+<script src="js/vue2.6.11/vue.min.js"></script>
+<script src="js/swiper-5.4.5/swiper.min.js"></script>
+
+
+<script>
+    $(function () {
+        var mySwiper = new Swiper('.swiper-container', {
+            // direction: 'vertical', // 垂直切换选项
+            autoplay: {
+                delay: 5000,
+                disableOnInteraction: false
+            },//可选选项，自动滑动
+            loop: true, // 循环模式选项
+            speed: 2000,
+
+            // 如果需要分页器
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true
+            },
+
+            // 如果需要前进后退按钮
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev'
+            }
+        });
+
+        // 鼠标移入停止自动滚动
+        var $swiperSide = $('.swiper-slide');
+        $swiperSide.mouseenter(function () {
+            mySwiper.autoplay.stop();
+        });
+        // 鼠标移出开始自动滚动
+        $swiperSide.mouseleave(function () {
+            mySwiper.autoplay.start();
+        });
+    });
+
+    new Vue({
+        el: '#wrapper',
+        data: {
+            tableData: [],  // 菜谱数据
+            materialTableData: [],  // 食材数据
+            activeIndex: 0,
+            user: {},
+            isShow: false,
+            date: null,
+            isLotteryRunning: false, // 抽奖是否正在运行
+            lotteryItems: [], // 抽奖物品列表
+            selectedFood: null, // 选中的食物
+            lotteryOffset: 0, // 抽奖轨道偏移量
+            lotteryInterval: null // 抽奖定时器
+        },
+        computed: {
+            displayLotteryItems() {
+                // 渲染五轮奖池内容，防止转动时出现空白
+                return [
+                    ...this.lotteryItems,
+                    ...this.lotteryItems,
+                    ...this.lotteryItems,
+                    ...this.lotteryItems,
+                    ...this.lotteryItems
+                ];
+            }
+        },
+        created: function () {
+            axios.get('/auth').then(res => {
+                if (res.data.code === '0') {
+                    this.user = res.data.data;
+                    if (this.user.level !== 3) {
+                        this.isShow = true;
+                    }
+                }
+            });
+
+            this.loadTable();
+            this.loadMaTable();
+            this.loadLotteryItems(); // 加载抽奖物品
+        },
+        methods: {
+            loadTable() {
+                axios.get("/foodsMenuInfo/page/all?" + "pageSize=8").then(res => {
+                    if (res.data.code === '0') {
+                        this.tableData = res.data.data.list;
+                    } else {
+                        alert(res.data.msg);
+                    }
+                });
+            },
+            loadMaTable() {
+                axios.get("/foodsMaterialInfo/page/all?pageSize=10").then(res => {
+                    if (res.data.code === '0') {
+                        this.materialTableData = res.data.data.list;
+                    } else {
+                        alert(res.data.msg);
+                    }
+                });
+            },
+            loadLotteryItems() {
+                axios.get("/foodsMenuInfo/page/all?pageSize=100").then(res => {
+                    if (res.data.code === '0') {
+                        let items = res.data.data.list;
+
+                        // 如果菜谱数量不足30个，用现有菜谱重复填充
+                        while (items.length < 30) {
+                            // 随机选择现有菜谱添加到列表中
+                            const randomIndex = Math.floor(Math.random() * res.data.data.list.length);
+                            items.push(res.data.data.list[randomIndex]);
+                        }
+
+                        // 只取前30个作为抽奖池
+                        this.lotteryItems = items.slice(0, 30);
+                    } else {
+                        alert(res.data.msg);
+                    }
+                });
+            },
+            startLottery() {
+                if (this.isLotteryRunning || this.lotteryItems.length === 0) {
+                    return;
+                }
+
+                this.isLotteryRunning = true;
+                this.selectedFood = null;
+                this.lotteryOffset = 0;
+
+                // 定义常量
+                const itemWidth = 200; // 每个卡片宽度
+                const containerWidth = 1000; // 容器宽度，5个卡片
+                const extraRounds = 3; // 额外转动3圈
+
+                // 随机选择最终结果
+                const finalIndex = Math.floor(Math.random() * this.lotteryItems.length);
+                const finalFood = this.lotteryItems[finalIndex];
+
+                // 让目标卡片停在中间那一轮
+                const middleIndex = this.lotteryItems.length; // 中间那一轮的起始索引
+                const targetIndex = middleIndex + finalIndex; // 目标卡片在大数组中的索引
+                const finalOffset = -(targetIndex * itemWidth) + (containerWidth / 2) - (itemWidth / 2);
+
+                // 动画参数
+                const duration = 3000; // 3秒，先快后慢停
+                const startTime = Date.now();
+                const startOffset = 0;
+
+                // 增加转动圈数，让抽奖更有趣味性
+                const totalItems = this.lotteryItems.length;
+                const extraDistance = extraRounds * totalItems * itemWidth;
+                const distance = finalOffset - startOffset - extraDistance;
+
+                // 缓动函数 - 先快后慢
+                const easeOutQuart = (t) => 1 - Math.pow(1 - t, 4);
+
+                this.lotteryInterval = setInterval(() => {
+                    const elapsed = Date.now() - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const easedProgress = easeOutQuart(progress);
+
+                    this.lotteryOffset = startOffset + (distance * easedProgress);
+
+                    if (progress >= 1) {
+                        clearInterval(this.lotteryInterval);
+                        this.isLotteryRunning = false;
+                        this.selectedFood = finalFood;
+
+                        // 显示结果
+                        setTimeout(() => {
+                            alert('🎉 抽奖结束！今天吃：' + this.selectedFood.name);
+                        }, 500);
+                    }
+                }, 16); // 约60fps
+            },
+            logout() {
+                axios.get("/logout").then(res => {
+                    if(res.data.code === '0') {
+                        location.href = '/front/index.html';
+                    } else {
+                        msg('error', res.data.msg);
+                    }
+                })
+            }
+        }
+    })
+</script>
+</body>
+</html>

@@ -29,3 +29,8 @@ authority:
 
 logging:
   file: log/my.log
+
+# AI智能助手服务配置
+ai:
+  service:
+    url: http://127.0.0.1:8001

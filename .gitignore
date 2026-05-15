@@ -48,12 +48,8 @@ Thumbs.db
 application-dev.properties
 application-prod.properties
 
-# Uploaded files
-src/main/resources/static/file/
-
-# Ignore all files in static/file directory except README.md
-src/main/resources/static/file/*
-!src/main/resources/static/file/README.md
+# Uploaded files (keep static/file/ in repo for images)
+# src/main/resources/static/file/
 
 # Ignore log files but keep the directory
 log/*

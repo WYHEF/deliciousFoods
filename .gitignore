@@ -54,3 +54,6 @@ application-prod.properties
 # Ignore log files but keep the directory
 log/*
 !log/.gitkeep
+
+# AI assistant env file (contains API keys)
+ai-assistant/.env

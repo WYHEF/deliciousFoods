@@ -1,6 +1,6 @@
 # 智能助手服务
 
-基于 LangChain + 通义千问 + Chroma 的 RAG 智能对话助手。
+基于 LangChain + 小米MiMo + Chroma 的 RAG 智能对话助手。
 
 ## 快速开始
 
@@ -13,7 +13,7 @@ pip install -r requirements.txt
 
 ### 2. 配置API Key
 
-复制 `.env.example` 为 `.env`，并填入你的通义千问 API Key：
+复制 `.env.example` 为 `.env`，并填入你的小米MiMo API Key：
 
 ```bash
 cp .env.example .env
@@ -21,8 +21,11 @@ cp .env.example .env
 
 编辑 `.env` 文件：
 ```
-DASHSCOPE_API_KEY=sk-your-actual-api-key
+MIMO_API_KEY=your_api_key_here
+MIMO_BASE_URL=https://platform.xiaomimimo.com/v1
 ```
+
+API Key 获取地址：https://platform.xiaomimimo.com
 
 ### 3. 添加知识库文档
 
@@ -88,6 +91,7 @@ ai-assistant/
 ├── main.py           # FastAPI 主服务
 ├── rag.py            # RAG 核心逻辑
 ├── requirements.txt  # Python 依赖
+├── .env              # 环境变量配置（不要提交到Git）
 ├── .env.example      # 环境变量模板
 ├── knowledge/        # 知识库文档目录
 │   └── *.md          # Markdown 文档
@@ -98,4 +102,5 @@ ai-assistant/
 
 1. 首次运行会自动处理知识库文档并构建向量索引
 2. 更新知识库文档后，调用 `/reload` 接口重新加载
-3. 通义千问 API 需要[阿里云 DashScope](https://dashscope.console.aliyun.com/) 账号
+3. 小米MiMo API 需要[小米AI平台](https://platform.xiaomimimo.com)账号
+4. `.env` 文件包含 API Key，不要提交到 Git 仓库

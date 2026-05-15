@@ -1,217 +1,144 @@
 """
-RAG 检索增强生成模块
-使用 LangChain + Chroma + 通义千问
+RAG 智能助手
+使用 小米MiMo大模型 + 关键词匹配检索
 """
 import os
 from typing import List, Optional
 from dotenv import load_dotenv
-
-from langchain_text_splitters import MarkdownHeaderTextSplitter, RecursiveCharacterTextSplitter
-from langchain_chroma import Chroma
-from langchain_community.embeddings import DashScopeEmbeddings
-from langchain_community.llms import Tongyi
-from langchain_core.documents import Document
+from openai import OpenAI
 
 # 加载环境变量
 load_dotenv()
 
-# 配置
-PERSIST_DIRECTORY = "./chroma_db"
+# MiMo API 配置
+MIMO_API_KEY = os.getenv("MIMO_API_KEY")
+MIMO_BASE_URL = os.getenv("MIMO_BASE_URL", "https://platform.xiaomimimo.com/v1")
+
+# 知识库目录
 KNOWLEDGE_DIRECTORY = "./knowledge"
 
 
 class RAGAssistant:
     """RAG智能助手"""
-    
+
     def __init__(self):
-        self.embeddings = None
-        self.vectorstore = None
-        self.llm = None
+        self.client = None
+        self.documents = []
         self._initialized = False
-    
+
     def initialize(self):
-        """初始化RAG系统"""
+        """初始化"""
         if self._initialized:
             return
-        
-        api_key = os.getenv("DASHSCOPE_API_KEY")
-        if not api_key or api_key == "your_dashscope_api_key_here":
-            raise ValueError("请在 .env 文件中配置有效的 DASHSCOPE_API_KEY")
-        
-        # 初始化通义千问嵌入模型
-        self.embeddings = DashScopeEmbeddings(
-            model="text-embedding-v2",
-            dashscope_api_key=api_key
+
+        api_key = MIMO_API_KEY
+        if not api_key or api_key == "your_api_key_here":
+            raise ValueError("请在 .env 文件中配置有效的 MIMO_API_KEY")
+
+        print(f"[DEBUG] API Key: {api_key[:10]}...")
+        print(f"[DEBUG] Base URL: {MIMO_BASE_URL}")
+
+        self.client = OpenAI(
+            api_key=api_key,
+            base_url=MIMO_BASE_URL,
+            default_headers={"api-key": api_key}
         )
-        
-        # 初始化通义千问大模型
-        self.llm = Tongyi(
-            model_name="qwen-plus",
-            dashscope_api_key=api_key,
-            temperature=0.7
-        )
-        
-        # 加载或创建向量数据库
-        if os.path.exists(PERSIST_DIRECTORY) and os.listdir(PERSIST_DIRECTORY):
-            try:
-                self.vectorstore = Chroma(
-                    persist_directory=PERSIST_DIRECTORY,
-                    embedding_function=self.embeddings
-                )
-            except Exception as e:
-                print(f"加载向量数据库失败，将重新创建: {e}")
-                self._create_vectorstore()
-        else:
-            self._create_vectorstore()
-        
+
+        self._load_documents()
         self._initialized = True
-    
-    def _create_vectorstore(self):
-        """创建向量数据库"""
-        documents = self._load_documents()
-        if documents:
-            self.vectorstore = Chroma.from_documents(
-                documents=documents,
-                embedding=self.embeddings,
-                persist_directory=PERSIST_DIRECTORY
-            )
-        else:
-            # 如果没有文档，创建空的向量数据库
-            self.vectorstore = Chroma.from_texts(
-                texts=["知识库暂无内容，请添加文档后重新加载。"],
-                embedding=self.embeddings,
-                persist_directory=PERSIST_DIRECTORY
-            )
-    
-    def _load_documents(self) -> List[Document]:
+
+    def _load_documents(self):
         """加载知识库文档"""
-        documents = []
-        
+        self.documents = []
+
         if not os.path.exists(KNOWLEDGE_DIRECTORY):
             os.makedirs(KNOWLEDGE_DIRECTORY)
-            return documents
-        
+            return
+
         for filename in os.listdir(KNOWLEDGE_DIRECTORY):
             if filename.endswith('.md') or filename.endswith('.txt'):
                 filepath = os.path.join(KNOWLEDGE_DIRECTORY, filename)
                 try:
                     with open(filepath, 'r', encoding='utf-8') as f:
                         content = f.read()
-                    
-                    # 按Markdown标题分割
-                    markdown_splitter = MarkdownHeaderTextSplitter(
-                        headers_to_split_on=[
-                            ("#", "header1"),
-                            ("##", "header2"),
-                            ("###", "header3"),
-                        ]
-                    )
-                    md_splits = markdown_splitter.split_text(content)
-                    
-                    if not md_splits:
-                        text_splitter = RecursiveCharacterTextSplitter(
-                            chunk_size=500,
-                            chunk_overlap=50
-                        )
-                        chunks = text_splitter.split_text(content)
-                        for i, chunk in enumerate(chunks):
-                            documents.append(Document(
-                                page_content=chunk,
-                                metadata={"source": filename, "chunk": i}
-                            ))
-                    else:
-                        text_splitter = RecursiveCharacterTextSplitter(
-                            chunk_size=500,
-                            chunk_overlap=50
-                        )
-                        for split in md_splits:
-                            chunks = text_splitter.split_text(split.page_content)
-                            for i, chunk in enumerate(chunks):
-                                documents.append(Document(
-                                    page_content=chunk,
-                                    metadata={**split.metadata, "source": filename, "chunk": i}
-                                ))
-                    
+                    self.documents.append({
+                        "source": filename,
+                        "content": content
+                    })
                     print(f"已加载文档: {filename}")
-                    
                 except Exception as e:
                     print(f"加载文档 {filename} 失败: {e}")
-        
-        print(f"共生成 {len(documents)} 个文本块")
-        return documents
-    
+
+        print(f"共加载 {len(self.documents)} 个文档")
+
     def reload_knowledge(self) -> dict:
         """重新加载知识库"""
-        import shutil
-        if os.path.exists(PERSIST_DIRECTORY):
-            shutil.rmtree(PERSIST_DIRECTORY)
-        
         self._initialized = False
         self.initialize()
-        
         return {"status": "success", "message": "知识库已重新加载"}
-    
+
+    def _search(self, query: str) -> str:
+        """简单关键词搜索"""
+        if not self.documents:
+            return "知识库暂无内容"
+
+        results = []
+        for doc in self.documents:
+            # 简单关键词匹配
+            if any(kw in doc["content"] for kw in query):
+                results.append(doc["content"])
+            elif any(kw in doc["content"] for kw in query.split()):
+                results.append(doc["content"])
+
+        if results:
+            return "\n\n".join(results[:3])
+
+        # 没有匹配时返回所有文档摘要
+        return "\n\n".join([doc["content"][:500] for doc in self.documents[:3]])
+
     def chat(self, question: str, history: Optional[List[dict]] = None) -> dict:
         """对话接口"""
         self.initialize()
-        
-        # 检索相关文档
-        docs = self.vectorstore.similarity_search(question, k=3)
-        
-        # 构建上下文
-        context = "\n\n".join([doc.page_content for doc in docs])
-        
-        # 构建提示
+
+        # 检索相关内容
+        context = self._search(question)
+
+        # 构建消息
+        messages = [
+            {"role": "system", "content": f"""你是一个智能助手，请根据以下知识库内容回答用户问题。
+如果知识库中没有相关信息，请诚实地说"抱歉，我在知识库中没有找到相关信息"，不要编造答案。
+
+知识库内容:
+{context}"""}
+        ]
+
+        # 添加历史对话
         if history:
-            history_text = "\n".join([
-                f"{'用户' if h['role'] == 'user' else '助手'}: {h['content']}"
-                for h in history[-5:]
-            ])
-            prompt = f"""你是一个智能助手，请根据以下知识库内容回答用户问题。
-如果知识库中没有相关信息，请诚实地说"抱歉，我在知识库中没有找到相关信息"，不要编造答案。
+            for h in history[-5:]:
+                messages.append({"role": h["role"], "content": h["content"]})
 
-历史对话:
-{history_text}
+        # 添加用户问题
+        messages.append({"role": "user", "content": question})
 
-知识库内容:
-{context}
-
-用户问题: {question}
-
-回答:"""
-        else:
-            prompt = f"""你是一个智能助手，请根据以下知识库内容回答用户问题。
-如果知识库中没有相关信息，请诚实地说"抱歉，我在知识库中没有找到相关信息"，不要编造答案。
-
-知识库内容:
-{context}
-
-用户问题: {question}
-
-回答:"""
-        
         try:
-            # 调用大模型
-            answer = self.llm.invoke(prompt)
-            
+            response = self.client.chat.completions.create(
+                model="mimo-v2.5-pro",
+                messages=messages,
+                temperature=0.7,
+                max_tokens=1024
+            )
+
+            answer = response.choices[0].message.content
+
             # 构建来源信息
-            sources = []
-            seen_sources = set()
-            for doc in docs:
-                source = doc.metadata.get("source", "未知来源")
-                if source not in seen_sources:
-                    sources.append({
-                        "source": source,
-                        "content": doc.page_content[:200] + "..." if len(doc.page_content) > 200 else doc.page_content
-                    })
-                    seen_sources.add(source)
-            
+            sources = [{"source": doc["source"], "content": doc["content"][:200]} for doc in self.documents]
+
             return {
                 "status": "success",
                 "answer": answer,
                 "sources": sources
             }
-            
+
         except Exception as e:
             import traceback
             traceback.print_exc()
